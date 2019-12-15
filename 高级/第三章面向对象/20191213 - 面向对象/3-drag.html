@@ -51,7 +51,7 @@ class Drag {
             };
             this.startEl= this.getOffset();
             document.addEventListener("mousemove",this.move);
-            document.addEventListener("mouseup",()=>{
+            document.addEventListener("mouseup",() => {
                 document.removeEventListener("mousemove",move);
             },{once: true});
        }); 
