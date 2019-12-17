@@ -19,5 +19,54 @@
 </body>
 </html>
 <script>
+    /*
+    *   event: {
+    *       event:{
+    *           start: [fn1, fn2, fn3...],
+    *           move: [fn1, fn2, fn3...],
+    *           end: [fn1, fn2, fn3...],
+    *       },
+    *       on: function(){},
+    *       off: function(){},
+    *       dispatch: function(){}
+    *   }
+    */
 
+    // 事件
+    class Event {
+        event = {} // 事件池
+
+        // 注册事件
+        on(eventName, fn) {
+            if (!this.event[eventName]) {
+                this.event[eventName] = []
+            }
+
+            this.event[eventName].push(fn)
+        }
+
+        // 删除事件
+        off(eventName, fn) {
+            if (!this.event[eventName]) {
+                return
+            }
+
+            this.event[eventName] = this.event[eventName].filter(item => item != fn)
+        }
+
+        // 执行事件
+        dispatch(eventName) {
+            if (!this.event[eventName]) {
+                return
+            }
+
+            this.event[eventName].forEach(item => {
+                item.call(this)
+            })
+        }
+    }
+
+    class BaseDrag extends Event {
+        
+    }
 </script>
