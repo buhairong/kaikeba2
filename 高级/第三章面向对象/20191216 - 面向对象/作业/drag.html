@@ -34,39 +34,129 @@
 
     // 事件
     class Event {
-        event = {} // 事件池
+        events = {} // 事件池
 
         // 注册事件
         on(eventName, fn) {
-            if (!this.event[eventName]) {
-                this.event[eventName] = []
+            if (!this.events[eventName]) {
+                this.events[eventName] = []
             }
 
-            this.event[eventName].push(fn)
+            this.events[eventName].push(fn)
         }
 
         // 删除事件
         off(eventName, fn) {
-            if (!this.event[eventName]) {
+            if (!this.events[eventName]) {
                 return
             }
 
-            this.event[eventName] = this.event[eventName].filter(item => item != fn)
+            this.events[eventName] = this.events[eventName].filter(item => item != fn)
         }
 
         // 执行事件
-        dispatch(eventName) {
-            if (!this.event[eventName]) {
+        dispatch(eventName, ...arg) {
+            if (!this.events[eventName]) {
                 return
             }
 
-            this.event[eventName].forEach(item => {
-                item.call(this)
+            this.events[eventName].forEach(item => {
+                item.call(this, ...arg)
             })
         }
     }
 
     class BaseDrag extends Event {
-        
+        constructor(el) {
+            super()
+            this.el = el
+            this.startEL = {} // 元素初始位置
+            this.startMouse = {} // 鼠标初始位置
+            this.start()
+        }
+
+        start() {
+            let move = (e) => {
+                this.move(e)
+            }
+
+            this.el.addEventListener('mousedown', (e) => {
+                e.preventDefault()
+                this.startMouse = {
+                    x: e.clientX,
+                    y: e.clientY
+                }
+
+                this.dispatch('dragstart', e)
+
+                document.addEventListener('mousemove', move)
+                document.addEventListener('mouseup', () => {
+                    document.removeEventListener('mousemove', move)
+                },{once: true})
+            })
+        }
+
+        // 元素移动
+        move(e) {
+            let nowMouse = {
+                x: e.clientX,
+                y: e.clientY
+            }
+
+            let disMouse = {
+                x: nowMouse.x - this.startMouse.x,
+                y: nowMouse.y - this.startMouse.y
+            }
+
+           this.dispatch('drag', e, nowMouse, disMouse)
+        }
+
+        // 获取元素当前位置
+        getOffset() {
+            return {
+                x: parseFloat(getComputedStyle(this.el)['left']),
+                y: parseFloat(getComputedStyle(this.el)['top'])
+            }
+        }
+
+        // 存储元素当前位置
+        setOffset(dis) {
+            this.el.style.left = dis.x + this.startEL.x + 'px'
+            this.el.style.top = dis.y + this.startEL.y + 'px'
+        }
+    }
+
+    class Drag extends BaseDrag {
+        constructor(el) {
+            super(el)
+            this.on('dragstart', (e) => {
+                this.startEL = this.getOffset()
+                e.preventDefault()
+            })
+
+            this.on('drag', (e, nowMouse, disMouse) => {
+                this.setOffset(disMouse)
+            })
+        }
+    }
+
+    class CopyDrag extends BaseDrag {
+        constructor(el) {
+            super(el)
+            this.on('dragcopystart', e => {
+                this.startEL = this.getOffset()
+                e.preventDefault()
+            })
+
+            this.on('dragcopy', (e, nowMouse, disMouse) => {
+                this.setOffset(disMouse)
+            })
+        }
+    }
+
+    {
+        let box = document.querySelector('#box')
+        let drag = new Drag(box)
+
     }
 </script>
