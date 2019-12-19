@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        #box {
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #box1 {
             position: absolute;
             top: 50px;
             left: 50px;
@@ -12,10 +16,39 @@
             height: 50px;
             background: red;
         }
+        #box2 {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 50px;
+            height: 50px;
+            background: green;
+        }
+        #box3 {
+            position: absolute;
+            top: 150px;
+            left: 150px;
+            width: 50px;
+            height: 50px;
+            background: blue;
+        }
+        .region {
+            position: fixed;
+            border: 1px solid #000;
+            background: rgba(0, 0, 0, .2);
+        }
+        #wrap {
+            width: 100vw;
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
-<div id="box"></div>
+<div id="wrap">
+    <div id="box1"></div>
+    <div id="box2"></div>
+    <div id="box3"></div>
+</div>
 </body>
 </html>
 <script>
@@ -66,6 +99,7 @@
         }
     }
 
+    // 拖拽基类
     class BaseDrag extends Event {
         constructor(el) {
             super()
@@ -80,18 +114,23 @@
                 this.move(e)
             }
 
-            this.el.addEventListener('mousedown', (e) => {
+            this.el && this.el.addEventListener('mousedown', (e) => {
                 e.preventDefault()
+                e.stopPropagation()
                 this.startMouse = {
                     x: e.clientX,
                     y: e.clientY
                 }
 
                 this.dispatch('dragstart', e)
+                this.dispatch('dragcopystart', e)
+                this.dispatch('regionstart', e)
 
                 document.addEventListener('mousemove', move)
                 document.addEventListener('mouseup', () => {
                     document.removeEventListener('mousemove', move)
+                    this.dispatch('dragcopyend', e)
+                    this.dispatch('regionend', e)
                 },{once: true})
             })
         }
@@ -109,6 +148,8 @@
             }
 
            this.dispatch('drag', e, nowMouse, disMouse)
+           this.dispatch('region', e, nowMouse, disMouse)
+           this.dispatch('regiondrag', e, nowMouse, disMouse)
         }
 
         // 获取元素当前位置
@@ -126,9 +167,14 @@
         }
     }
 
+    // 单文件基本拖拽
     class Drag extends BaseDrag {
         constructor(el) {
             super(el)
+            this.startDrag()
+        }
+
+        startDrag() {
             this.on('dragstart', (e) => {
                 this.startEL = this.getOffset()
                 e.preventDefault()
@@ -140,23 +186,110 @@
         }
     }
 
+    // 单文件残影拖拽
     class CopyDrag extends BaseDrag {
         constructor(el) {
             super(el)
+            this.cloneBox = null
+            this.startDragCopy()
+        }
+
+        startDragCopy() {
             this.on('dragcopystart', e => {
                 this.startEL = this.getOffset()
+                this.cloneBox = this.el.cloneNode(true)
+                document.body.appendChild(this.cloneBox)
+                this.el.style.opacity = .5
                 e.preventDefault()
             })
 
-            this.on('dragcopy', (e, nowMouse, disMouse) => {
+            this.on('drag', (e, nowMouse, disMouse) => {
                 this.setOffset(disMouse)
+            })
+
+            this.on('dragcopyend', (e) => {
+                document.body.removeChild(this.cloneBox)
+                this.el.style.opacity = 1
+            })
+        }
+    }
+
+    // 框选
+    class selectRegion extends BaseDrag {
+        constructor(el) {
+            super(el)
+            this.regionEl = null
+            this.startRegion()
+        }
+
+        startRegion() {
+            this.on('regionstart', (e) => {
+                this.regionEl = document.createElement('div')
+                this.regionEl.classList.add('region')
+                document.body.appendChild(this.regionEl)
+            })
+
+            this.on('region', (e, nowMouse, disMouse) => {
+                let l = Math.min(this.startMouse.x, nowMouse.x)
+                let t = Math.min(this.startMouse.y, nowMouse.y)
+                let w = Math.abs(disMouse.x)
+                let h = Math.abs(disMouse.y)
+                this.regionEl.style.left = l + 'px'
+                this.regionEl.style.top = t + 'px'
+                this.regionEl.style.width = w + 'px'
+                this.regionEl.style.height = h + 'px'
+            })
+
+            this.on('regionend', (e) => {
+                document.body.removeChild(this.regionEl)
+            })
+        }
+    }
+
+    // 多文件框选残影拖拽
+    class selectRegionDrag extends BaseDrag {
+        constructor(el) {
+            super(el)
+            this.regionEl = null
+            this.startRegionDrag()
+        }
+
+        startRegionDrag() {
+            let childEls = this.el.children
+            console.log('childEls', childEls)
+
+            this.on('regionstart', (e) => {
+                this.regionEl = document.createElement('div')
+                this.regionEl.classList.add('region')
+                document.body.appendChild(this.regionEl)
+            })
+
+            this.on('regiondrag', (e, nowMouse, disMouse) => {
+                let l = Math.min(this.startMouse.x, nowMouse.x)
+                let t = Math.min(this.startMouse.y, nowMouse.y)
+                let w = Math.abs(disMouse.x)
+                let h = Math.abs(disMouse.y)
+                this.regionEl.style.left = l + 'px'
+                this.regionEl.style.top = t + 'px'
+                this.regionEl.style.width = w + 'px'
+                this.regionEl.style.height = h + 'px'
+            })
+
+            this.on('regionend', (e) => {
+                document.body.removeChild(this.regionEl)
             })
         }
     }
 
     {
-        let box = document.querySelector('#box')
-        let drag = new Drag(box)
+        let wrap = document.querySelector('#wrap')
+        let box1 = wrap.querySelector('#box1')
+        let box2 = wrap.querySelector('#box2')
+
+        let drag1 = new Drag(box1)
+        let drag2 = new CopyDrag(box2)
+        let drag3 = new selectRegion(document)
+        let drag4 = new selectRegionDrag(wrap)
 
     }
 </script>
