@@ -41,6 +41,9 @@
             width: 100vw;
             height: 100vh;
         }
+        .regionItem {
+            opacity: .5;
+        }
     </style>
 </head>
 <body>
@@ -251,6 +254,7 @@
         constructor(el) {
             super(el)
             this.regionEl = null
+            this.regionItems = []
             this.startRegionDrag()
         }
 
@@ -273,12 +277,160 @@
                 this.regionEl.style.top = t + 'px'
                 this.regionEl.style.width = w + 'px'
                 this.regionEl.style.height = h + 'px'
+                Array.from(childEls).forEach(item => {
+                    let flag = false
+
+                    // 选框四角坐标点
+                    let selectPos = {
+                        leftTopX: l,
+                        leftTopY: t,
+                        rightTopX: l + w,
+                        rightTopY: t,
+                        leftBottomX: l,
+                        leftBottomY: t + h,
+                        rightBottomX: l + w,
+                        rightBottomY: t + h
+                    }
+
+                    // 元素四角坐标点
+                    let itemL = parseFloat(getComputedStyle(item)['left'])
+                    let itemT = parseFloat(getComputedStyle(item)['top'])
+                    let itemW = parseFloat(getComputedStyle(item)['width'])
+                    let itemH = parseFloat(getComputedStyle(item)['height'])
+
+                    let itemPos = {
+                        leftTopX: itemL,
+                        leftTopY: itemT,
+                        rightTopX: itemL + itemW,
+                        rightTopY: itemT,
+                        leftBottomX: itemL,
+                        leftBottomY: itemT + itemH,
+                        rightBottomX: itemL + itemW,
+                        rightBottomY: itemT + itemH
+                    }
+
+                    if (this.leftTopRegion(selectPos, itemPos)) flag = true
+                    if (this.rightTopRegion(selectPos, itemPos)) flag = true
+                    if (this.leftBottomRegion(selectPos, itemPos)) flag = true
+                    if (this.rightBottomRegion(selectPos, itemPos)) flag = true
+                    if (this.topToBottomRegion(selectPos, itemPos)) flag = true
+                    if (this.bottomToTopRegion(selectPos, itemPos)) flag = true
+                    if (this.leftToRightRegion(selectPos, itemPos)) flag = true
+                    if (this.rightToLeftRegion(selectPos, itemPos)) flag = true
+                    if (this.bodyRegion(selectPos, itemPos)) flag = true
+
+                    let index = this.regionItems.includes(item)
+
+                    if (flag && !index) {
+                        this.regionItems.push(item)
+                        item.classList.add('regionItem')
+                    } else if (!flag && index) {
+                        this.regionItems = this.regionItems.filter(_item => _item != item)
+                        item.classList.remove('regionItem')
+                    }
+                })
             })
 
             this.on('regionend', (e) => {
                 document.body.removeChild(this.regionEl)
             })
         }
+
+        // 左上交叉点  框选右下角区域 与 元素左上角区域重合
+        leftTopRegion(selectPos, itemPos) {
+            if( selectPos.rightBottomX > itemPos.leftTopX &&
+                selectPos.rightBottomX < itemPos.rightTopX &&
+                selectPos.rightBottomY > itemPos.leftTopY &&
+                selectPos.rightBottomY < itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
+
+        // 右上交叉点  框选左下角区域 与 元素右上角区域重合
+        rightTopRegion(selectPos, itemPos) {
+            if( selectPos.leftBottomX > itemPos.leftTopX &&
+                selectPos.leftBottomX < itemPos.rightTopX &&
+                selectPos.leftBottomY > itemPos.leftTopY &&
+                selectPos.leftBottomY < itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
+
+        // 左下交叉点 框选右上角区域 与 元素左下角区域重合
+        leftBottomRegion(selectPos, itemPos) {
+            if( selectPos.rightTopX > itemPos.leftTopX &&
+                selectPos.rightTopX < itemPos.rightTopX &&
+                selectPos.rightTopY > itemPos.leftTopY &&
+                selectPos.rightTopY < itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
+
+        // 右下交叉点  框选左上角区域 与 元素右下角区域重合
+        rightBottomRegion(selectPos, itemPos) {
+            if( selectPos.leftTopX > itemPos.leftTopX &&
+                selectPos.leftTopX < itemPos.rightTopX &&
+                selectPos.leftTopY > itemPos.leftTopY &&
+                selectPos.leftTopY < itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
+
+        // 从上至下交叉线 框选下面部分 与 元素上面部分重合
+        topToBottomRegion(selectPos, itemPos) {
+            if( selectPos.leftBottomX < itemPos.leftTopX &&
+                selectPos.rightBottomX > itemPos.rightTopX &&
+                selectPos.leftBottomY > itemPos.leftTopY &&
+                selectPos.leftBottomY < itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
+
+        // 从下至上交叉线 框选上面部分 与 元素下面部分重合
+        bottomToTopRegion(selectPos, itemPos) {
+            if( selectPos.leftTopX < itemPos.leftBottomX &&
+                selectPos.rightTopX > itemPos.rightBottomX &&
+                selectPos.rightTopY > itemPos.leftTopY &&
+                selectPos.rightTopY < itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
+
+        // 从左至右交叉线 框选右面部分 与 元素左面部分重合
+        leftToRightRegion(selectPos, itemPos) {}
+
+        // 从右至左交叉线 框选左面部分 与 元素右面部分重合
+        rightToLeftRegion(selectPos, itemPos) {}
+
+        // 选框包含整个元素
+        bodyRegion(selectPos, itemPos) {
+            if( selectPos.leftTopX < itemPos.leftTopX &&
+                selectPos.rightTopX > itemPos.rightTopX &&
+                selectPos.leftTopY < itemPos.leftTopY &&
+                selectPos.leftBottomY > itemPos.leftBottomY
+            ) {
+                return true
+            }
+        }
+
     }
 
     {
