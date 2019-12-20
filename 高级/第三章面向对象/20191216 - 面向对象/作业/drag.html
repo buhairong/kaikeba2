@@ -18,16 +18,16 @@
         }
         #box2 {
             position: absolute;
-            top: 100px;
-            left: 100px;
+            top: 120px;
+            left: 120px;
             width: 50px;
             height: 50px;
             background: green;
         }
         #box3 {
             position: absolute;
-            top: 150px;
-            left: 150px;
+            top: 200px;
+            left: 200px;
             width: 50px;
             height: 50px;
             background: blue;
@@ -109,6 +109,8 @@
             this.el = el
             this.startEL = {} // 元素初始位置
             this.startMouse = {} // 鼠标初始位置
+            this.nowMouse = {} // 鼠标当前位置
+            this.disMouse = {} // 鼠标移动距离
             this.start()
         }
 
@@ -124,10 +126,9 @@
                     x: e.clientX,
                     y: e.clientY
                 }
-
+                this.dispatch('regionstart', e)
                 this.dispatch('dragstart', e)
                 this.dispatch('dragcopystart', e)
-                this.dispatch('regionstart', e)
 
                 document.addEventListener('mousemove', move)
                 document.addEventListener('mouseup', () => {
@@ -140,33 +141,33 @@
 
         // 元素移动
         move(e) {
-            let nowMouse = {
+            this.nowMouse = {
                 x: e.clientX,
                 y: e.clientY
             }
 
-            let disMouse = {
-                x: nowMouse.x - this.startMouse.x,
-                y: nowMouse.y - this.startMouse.y
+            this.disMouse = {
+                x: this.nowMouse.x - this.startMouse.x,
+                y: this.nowMouse.y - this.startMouse.y
             }
 
-           this.dispatch('drag', e, nowMouse, disMouse)
-           this.dispatch('region', e, nowMouse, disMouse)
-           this.dispatch('regiondrag', e, nowMouse, disMouse)
+           this.dispatch('drag', e)
+           this.dispatch('region', e)
+           this.dispatch('regiondrag', e)
         }
 
         // 获取元素当前位置
-        getOffset() {
+        getOffset(el = this.el) {
             return {
-                x: parseFloat(getComputedStyle(this.el)['left']),
-                y: parseFloat(getComputedStyle(this.el)['top'])
+                x: parseFloat(getComputedStyle(el)['left']),
+                y: parseFloat(getComputedStyle(el)['top'])
             }
         }
 
         // 存储元素当前位置
-        setOffset(dis) {
-            this.el.style.left = dis.x + this.startEL.x + 'px'
-            this.el.style.top = dis.y + this.startEL.y + 'px'
+        setOffset(dis, el = this.el, startEL = this.startEL) {
+            el.style.left = dis.x + startEL.x + 'px'
+            el.style.top = dis.y + startEL.y + 'px'
         }
     }
 
@@ -183,8 +184,8 @@
                 e.preventDefault()
             })
 
-            this.on('drag', (e, nowMouse, disMouse) => {
-                this.setOffset(disMouse)
+            this.on('drag', (e) => {
+                this.setOffset(this.disMouse)
             })
         }
     }
@@ -202,17 +203,17 @@
                 this.startEL = this.getOffset()
                 this.cloneBox = this.el.cloneNode(true)
                 document.body.appendChild(this.cloneBox)
-                this.el.style.opacity = .5
+                this.el.classList.add('regionItem')
                 e.preventDefault()
             })
 
-            this.on('drag', (e, nowMouse, disMouse) => {
-                this.setOffset(disMouse)
+            this.on('drag', (e) => {
+                this.setOffset(this.disMouse)
             })
 
             this.on('dragcopyend', (e) => {
                 document.body.removeChild(this.cloneBox)
-                this.el.style.opacity = 1
+                this.el.classList.remove('regionItem')
             })
         }
     }
@@ -232,11 +233,11 @@
                 document.body.appendChild(this.regionEl)
             })
 
-            this.on('region', (e, nowMouse, disMouse) => {
-                let l = Math.min(this.startMouse.x, nowMouse.x)
-                let t = Math.min(this.startMouse.y, nowMouse.y)
-                let w = Math.abs(disMouse.x)
-                let h = Math.abs(disMouse.y)
+            this.on('region', (e) => {
+                let l = Math.min(this.startMouse.x, this.nowMouse.x)
+                let t = Math.min(this.startMouse.y, this.nowMouse.y)
+                let w = Math.abs(this.disMouse.x)
+                let h = Math.abs(this.disMouse.y)
                 this.regionEl.style.left = l + 'px'
                 this.regionEl.style.top = t + 'px'
                 this.regionEl.style.width = w + 'px'
@@ -253,14 +254,14 @@
     class selectRegionDrag extends BaseDrag {
         constructor(el) {
             super(el)
-            this.regionEl = null
-            this.regionItems = []
+            this.regionEl = null // 框选范围父级元素
+            this.regionItems = [] // 框选到的子元素
+            this.regionItemsStart = [] // 框选到的子元素初始位置
             this.startRegionDrag()
         }
 
         startRegionDrag() {
             let childEls = this.el.children
-            console.log('childEls', childEls)
 
             this.on('regionstart', (e) => {
                 this.regionEl = document.createElement('div')
@@ -268,11 +269,11 @@
                 document.body.appendChild(this.regionEl)
             })
 
-            this.on('regiondrag', (e, nowMouse, disMouse) => {
-                let l = Math.min(this.startMouse.x, nowMouse.x)
-                let t = Math.min(this.startMouse.y, nowMouse.y)
-                let w = Math.abs(disMouse.x)
-                let h = Math.abs(disMouse.y)
+            this.on('regiondrag', (e) => {
+                let l = Math.min(this.startMouse.x, this.nowMouse.x)
+                let t = Math.min(this.startMouse.y, this.nowMouse.y)
+                let w = Math.abs(this.disMouse.x)
+                let h = Math.abs(this.disMouse.y)
                 this.regionEl.style.left = l + 'px'
                 this.regionEl.style.top = t + 'px'
                 this.regionEl.style.width = w + 'px'
@@ -333,10 +334,11 @@
 
             this.on('regionend', (e) => {
                 document.body.removeChild(this.regionEl)
+                this.selectMove()
             })
         }
 
-        // 左上交叉点  框选右下角区域 与 元素左上角区域重合
+        // 左上交叉面  框选右下角区域 与 元素左上角区域重合
         leftTopRegion(selectPos, itemPos) {
             if( selectPos.rightBottomX > itemPos.leftTopX &&
                 selectPos.rightBottomX < itemPos.rightTopX &&
@@ -349,7 +351,7 @@
             return false
         }
 
-        // 右上交叉点  框选左下角区域 与 元素右上角区域重合
+        // 右上交叉面  框选左下角区域 与 元素右上角区域重合
         rightTopRegion(selectPos, itemPos) {
             if( selectPos.leftBottomX > itemPos.leftTopX &&
                 selectPos.leftBottomX < itemPos.rightTopX &&
@@ -362,7 +364,7 @@
             return false
         }
 
-        // 左下交叉点 框选右上角区域 与 元素左下角区域重合
+        // 左下交叉面 框选右上角区域 与 元素左下角区域重合
         leftBottomRegion(selectPos, itemPos) {
             if( selectPos.rightTopX > itemPos.leftTopX &&
                 selectPos.rightTopX < itemPos.rightTopX &&
@@ -375,7 +377,7 @@
             return false
         }
 
-        // 右下交叉点  框选左上角区域 与 元素右下角区域重合
+        // 右下交叉面  框选左上角区域 与 元素右下角区域重合
         rightBottomRegion(selectPos, itemPos) {
             if( selectPos.leftTopX > itemPos.leftTopX &&
                 selectPos.leftTopX < itemPos.rightTopX &&
@@ -388,7 +390,7 @@
             return false
         }
 
-        // 从上至下交叉线 框选下面部分 与 元素上面部分重合
+        // 从上至下交叉面 框选下面部分 与 元素上面部分重合
         topToBottomRegion(selectPos, itemPos) {
             if( selectPos.leftBottomX < itemPos.leftTopX &&
                 selectPos.rightBottomX > itemPos.rightTopX &&
@@ -401,7 +403,7 @@
             return false
         }
 
-        // 从下至上交叉线 框选上面部分 与 元素下面部分重合
+        // 从下至上交叉面 框选上面部分 与 元素下面部分重合
         bottomToTopRegion(selectPos, itemPos) {
             if( selectPos.leftTopX < itemPos.leftBottomX &&
                 selectPos.rightTopX > itemPos.rightBottomX &&
@@ -414,11 +416,31 @@
             return false
         }
 
-        // 从左至右交叉线 框选右面部分 与 元素左面部分重合
-        leftToRightRegion(selectPos, itemPos) {}
+        // 从左至右交叉面 框选右面部分 与 元素左面部分重合
+        leftToRightRegion(selectPos, itemPos) {
+            if( selectPos.rightTopX > itemPos.leftTopX &&
+                selectPos.rightTopX < itemPos.rightTopX &&
+                selectPos.leftTopY < itemPos.leftTopY &&
+                selectPos.leftBottomY > itemPos.leftBottomY
+            ) {
+                return true
+            }
 
-        // 从右至左交叉线 框选左面部分 与 元素右面部分重合
-        rightToLeftRegion(selectPos, itemPos) {}
+            return false
+        }
+
+        // 从右至左交叉面 框选左面部分 与 元素右面部分重合
+        rightToLeftRegion(selectPos, itemPos) {
+            if( selectPos.leftTopX > itemPos.leftTopX &&
+                selectPos.leftTopX < itemPos.rightTopX &&
+                selectPos.leftTopY < itemPos.leftTopY &&
+                selectPos.leftBottomY > itemPos.leftBottomY
+            ) {
+                return true
+            }
+
+            return false
+        }
 
         // 选框包含整个元素
         bodyRegion(selectPos, itemPos) {
@@ -431,17 +453,77 @@
             }
         }
 
+        // 选框内的元素移动
+        selectMove() {
+            let move = (e) => {
+                this.nowMouse = {
+                    x: e.clientX,
+                    y: e.clientY
+                }
+
+                this.disMouse = {
+                    x: this.nowMouse.x - this.startMouse.x,
+                    y: this.nowMouse.y - this.startMouse.y
+                }
+
+                this.regionItems.forEach((item, index) => {
+                    this.setOffset(this.disMouse, item, this.regionItemsStart[index])
+                })
+            }
+
+            let cloneArr = []
+
+            this.regionItems.forEach(item => {
+                this.regionItemsStart.push(this.getOffset(item))
+
+                item.addEventListener('mousedown', (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+
+                    this.startMouse = {
+                        x: e.clientX,
+                        y: e.clientY
+                    }
+
+                    this.regionItems.forEach(_item => {
+                        let cloneBox = _item.cloneNode(true)
+                        cloneBox.style.opacity = 1
+                        cloneBox.classList.add('clone')
+                        this.el.appendChild(cloneBox)
+                    })
+
+                    document.addEventListener('mousemove', move)
+                    document.addEventListener('mouseup', () => {
+                        document.removeEventListener('mousemove', move)
+
+                        // 框选元素重置
+                        this.regionItems.forEach(_item => {
+                            _item.classList.remove('regionItem')
+                        })
+                        let clone = this.el.querySelectorAll('.clone')
+                        clone.forEach(_item => {
+                            this.el.removeChild(_item)
+                        })
+                        this.regionItems = []
+                        this.regionItemsStart = []
+                    },{once: true})
+                })
+            })
+        }
+
     }
 
     {
         let wrap = document.querySelector('#wrap')
         let box1 = wrap.querySelector('#box1')
         let box2 = wrap.querySelector('#box2')
+        let box3 = wrap.querySelector('#box3')
 
         let drag1 = new Drag(box1)
         let drag2 = new CopyDrag(box2)
-        let drag3 = new selectRegion(document)
-        let drag4 = new selectRegionDrag(wrap)
+        let drag3 = new CopyDrag(box3)
+        let drag4 = new selectRegion(document)
+        let drag5 = new selectRegionDrag(wrap)
 
     }
 </script>
