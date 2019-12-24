@@ -7,17 +7,14 @@
     <title>Document</title>
 </head>
 <body>
-<!-- <div id="app">
+ <div id="app">
     {{message}}  {{modelData}} {{message}}
     <div>
-        <p>姓名:{{ name }}，年龄: {{age}}</p>
+        <p>  姓名:  {{ name }}，  年龄:   {{  age  }}  </p>
         <p v-html="htmlData"></p>
         <input type="text" v-model="modelData" />
         <p>{{modelData}}</p>
     </div>
-</div>      -->
-<div id="app">
-    <h1>{{ message }}</h1>
 </div>
 <script>
 class kVue extends EventTarget {
@@ -107,7 +104,10 @@ let kvue = new kVue({
     el: "#app",
     data: {
        message: "Hello KKB",
-       age: 0
+       modelData: 'qwe',
+       age: 0,
+       name: 'abc',
+       htmlData: '圣诞节快乐！'
     }
 });
 setInterval(()=>{
