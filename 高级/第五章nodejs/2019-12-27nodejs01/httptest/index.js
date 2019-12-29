@@ -6,7 +6,7 @@ const mime = require("./mime.json");
 // console.log(mime);
 const server = http.createServer((req, res) => {
     // res.writeHead(200,{"content-type":"text/html;charset=utf8"})
-    // console.log(req.url);
+    console.log(req.url);
     
     // 1. http://localhost:8888/detail  2.http://localhost:8888/detail?name=zhangsan 是一个地址；
     let obj = url.parse(req.url,true);
@@ -32,6 +32,7 @@ const server = http.createServer((req, res) => {
             info:"some value...",
             status:1
         }
+        console.log(res)
         res.write(JSON.stringify(obj));
     }else{
         // console.log("else内容",obj.pathname);
