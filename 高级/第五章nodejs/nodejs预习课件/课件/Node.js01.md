@@ -30,9 +30,7 @@
 
 ---
 
-- Node.js 诞生于2009年，Node.js采用C++语言编写而成，是 一个Javascript的运行环境。
-Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行环境 ，让JavaScript的运行脱离浏览器端，
-可以使用JavaScript语言 书写服务器端代码。
+- Node.js 诞生于2009年，Node.js采用C++语言编写而成，是 一个Javascript的运行环境。Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行环境 ，让JavaScript的运行脱离浏览器端，可以使用JavaScript语言 书写服务器端代码。
 
 ### 安装Node.js
 
@@ -133,8 +131,7 @@ serve.listen(3000);
 
 - 在JavaScript发展初期就是为了实现简单的页面交互逻辑，寥寥数语即，如今随着前端代码日益膨胀
 
-  这时候JavaScript作为嵌入式的脚本语言的定位动摇了，JavaScript却没有为组织代码提供任何明显帮助，
-  JavaScript极其简单的代码组织规范不足以驾驭如此庞大规模的代码；
+  这时候JavaScript作为嵌入式的脚本语言的定位动摇了，JavaScript却没有为组织代码提供任何明显帮助，JavaScript极其简单的代码组织规范不足以驾驭如此庞大规模的代码；
 
 二、Node.js中的模块化  commonjs规范
 
