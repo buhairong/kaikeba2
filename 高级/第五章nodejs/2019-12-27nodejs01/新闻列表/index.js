@@ -98,6 +98,8 @@ let getParam = (queryString, param) => {
 const server = http.createServer((req, res) => {
     let obj = url.parse(req.url)
 
+    console.log('obj', obj)
+
     if(obj.pathname === '/' || obj.pathname === '/index.html') {
         res.setHeader('content-type', 'text/html;charset=utf8')
         let indexData = fs.readFileSync('./views/index.html').toString()

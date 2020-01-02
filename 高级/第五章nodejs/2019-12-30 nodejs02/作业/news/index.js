@@ -28,13 +28,25 @@ router.get('/index', async ctx => {
     const currentPageData = data.filter((item, index) => {
         return (currentPage - 1) * pageSize <= index && currentPage * pageSize > index
     })
+    const prev = currentPage == 1 ? 1 : currentPage*1 - 1
+    const next = currentPage == total ? total : currentPage*1 + 1
 
     await ctx.render('index', {
         total,
-        currentPageData
+        currentPageData,
+        prev,
+        next
     })
 })
 
+router.get('/detail', async ctx => {
+    const id = ctx.query.id || 1
+    const currentData = data.filter(item => item.id == id)
+
+    await ctx.render('detail', {
+        currentData
+    })
+})
 
 app.use(router.routes())
 app.listen(8888)

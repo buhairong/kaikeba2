@@ -22,12 +22,10 @@
 </head>
 <body>
     <div class="text">
-        <h1 class="title">新闻标题</h1>
-        <div class="article-info"> 韩国 时间：2019-6-18</div>
+        <h1 class="title">{{currentData[0].title}}</h1>
+        <div class="article-info"> {{currentData[0].country}} 时间：{{currentData[0].addTime}}</div>
         <p class="content">
-            新闻内容新闻内容
-            新闻内容新闻内容
-            新闻内容新闻内容
+            {{currentData[0].content}}
         </p>
     </div>
 </body>
