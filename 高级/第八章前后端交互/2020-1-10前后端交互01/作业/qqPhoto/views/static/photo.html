@@ -87,8 +87,19 @@
     </div>
 </body>
 <script>
+    const username = location.search.substr(1).split('=')[1]
+    console.log(username)
+    const mybtn = document.querySelector('.mybtn')
+    const close = document.querySelector('.close')
+    const masking = document.querySelector('.masking')
 
+    mybtn.onclick = function() {
+        masking.style.display = 'block'
+    }
 
+    close.onclick = function() {
+        masking.style.display = 'none'
+    }
 
     // class Peron{
     //     // 属于实力化对象的；
