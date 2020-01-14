@@ -92,6 +92,7 @@
     const mybtn = document.querySelector('.mybtn')
     const close = document.querySelector('.close')
     const masking = document.querySelector('.masking')
+    let uploadArr = []
 
     mybtn.onclick = function() {
         masking.style.display = 'block'
@@ -99,6 +100,57 @@
 
     close.onclick = function() {
         masking.style.display = 'none'
+    }
+
+    // 添加图片
+    document.querySelector('.imgFile').onchange = function() {
+        document.querySelector('.showContainer').style.display = 'none'
+        document.querySelector('.loadContainer').style.display = 'block'
+        ;[...this.files].forEach(file => {
+            let uploadObj = new UploadImg(file)
+            uploadArr.push(uploadObj)
+            uploadObj.createHtml()
+            console.log(uploadArr)
+        })
+    }
+
+    // 继续添加
+    document.querySelector('.imgFile-add').onchange = function() {
+        ;[...this.files].forEach(file => {
+            let uploadObj = new UploadImg(file)
+            uploadArr.push(uploadObj)
+            uploadObj.createHtml()
+            console.log(uploadArr)
+        })
+    }
+
+    class UploadImg{
+        constructor(file) {
+            this.file = file
+            this.el = null
+        }
+
+        createHtml() {
+            // 文件转换成base64
+            let fileReader = new FileReader()
+            fileReader.readAsDataURL(this.file)
+            fileReader.onload = () => {
+                let uploadDiv = document.createElement('div')
+                uploadDiv.classList.add('uploadPhotoItem')
+                uploadDiv.innerHTML = `
+                    <span class="myProgress">
+                        <span class="plan"></span>
+                        0%
+                    </span>
+                    <img src="${fileReader.result}" />
+                    <span class="pictureName">
+                        ${this.file.name}
+                    </span>
+                `
+                document.querySelector('.wantUpload').appendChild(uploadDiv)
+                this.el = uploadDiv
+            }
+        }
     }
 
     // class Peron{

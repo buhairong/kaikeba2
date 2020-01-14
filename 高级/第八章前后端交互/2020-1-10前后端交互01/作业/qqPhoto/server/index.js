@@ -34,34 +34,6 @@ router.options("/*",ctx=>{
     ctx.body = "";
 })
 
-router.get("/*",ctx=>{
-    ctx.set("Access-Control-Allow-Origin","http://localhost:3000");
-    // 设置前端允许请求的方法；
-    ctx.set("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,HEAD,OPTIONS");
-    // 设置允许携带凭证；
-    ctx.set("Access-Control-Allow-Credentials",true);
-    // 设置预检请求的缓存时间；
-    ctx.set("Access-Control-Max-Age",3600);
-    // 允许前端设置的头部
-    ctx.set("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization,token");
-    console.log("有预检请求");
-    ctx.body = "";
-})
-
-router.post("/*",ctx=>{
-    ctx.set("Access-Control-Allow-Origin","http://localhost:3000");
-    // 设置前端允许请求的方法；
-    ctx.set("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,HEAD,OPTIONS");
-    // 设置允许携带凭证；
-    ctx.set("Access-Control-Allow-Credentials",true);
-    // 设置预检请求的缓存时间；
-    ctx.set("Access-Control-Max-Age",3600);
-    // 允许前端设置的头部
-    ctx.set("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization,token");
-    console.log("有预检请求");
-    ctx.body = "";
-})
-
 //CORS
 let cors = (ctx) => {
     ctx.set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -76,15 +48,17 @@ let cors = (ctx) => {
 
 }
 
-router.post('/register/', async ctx => {
-    //cors(ctx)
+router.post('/register', async ctx => {
+    cors(ctx)
     let {username, password} = ctx.request.body
     let sql = 'INSERT INTO user (username, password, createDate) VALUES (?, ?, ?)'
 
     let result
 
     try {
+        console.log(username, password)
         let [rows] = await conection.promise().query(sql, [username, password, Date.now()])
+        console.log(rows)
         if (rows.affectedRows > 0) {
             result = {
                 status: 0,
@@ -104,7 +78,7 @@ router.post('/register/', async ctx => {
 })
 
 router.post('/login', async ctx => {
-    //cors(ctx)
+    cors(ctx)
     let {username, password} = ctx.request.body
     let sql = 'SELECT username FROM user WHERE username = ? AND password = ?'
     let result = []
