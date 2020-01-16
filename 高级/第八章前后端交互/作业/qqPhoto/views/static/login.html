@@ -52,21 +52,4 @@
           }
       }
   }
-
-  xmlDate()
-
-  function xmlDate(){
-      let xhr = new XMLHttpRequest();
-      xhr.open("get","http://localhost:4000/temp.xml",true);
-      xhr.overrideMimeType("text/xml");      // 返还头；
-
-      xhr.onload = function(){
-          console.log(xhr.readyState)
-          console.log(xhr.status)
-          console.log(xhr.responseXML);
-      }
-      // 请求头
-      xhr.send();
-  }
-
 </script>

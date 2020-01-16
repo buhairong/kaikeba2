@@ -48,6 +48,13 @@ let cors = (ctx) => {
 
 }
 
+router.post('/test', ctx => {
+    cors(ctx)
+    ctx.body = {
+        username: 'abc'
+    }
+})
+
 router.post('/register', async ctx => {
     cors(ctx)
     let {username, password} = ctx.request.body
