@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>fetch请求</h1>
+    <button class="btn">点击发送get</button>
+    <button class="btn2">点击发送post</button>
+</body>
+<script>
+// fetch缺点: 1.兼容性问题；2.上传下载接口；
+document.querySelector(".btn").onclick = function(){
+    fetch("/fetch").then(res=>{
+        return res.json();
+    }).then(res=>{
+        console.log(res);
+    })
+}
+
+document.querySelector(".btn2").onclick = function(){
+    let data = {
+        name:"李四"
+    }
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type","application/json");
+    myHeaders.append("custom-header","someheaders");
+    fetch("/fetchPost",{
+        method:"post",
+        headers:myHeaders,
+        // name=zhangsan&age=20;
+        body:JSON.stringify(data)
+    }).then(res=>{
+        // return res.json();
+        // return res.text();
+       return res.clone();
+    }).then(res=>{
+        // console.log(res);
+        return res.json();
+    }).then(res=>{
+        console.log(res);
+    })
+}
+
+
+</script>
+</html>
