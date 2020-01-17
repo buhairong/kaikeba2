@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html {
+            font-size: 10vw;
+        }
+        body {
+            margin: 0;
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #wrap {
+            position: relative;
+            width: 100vw;
+            overflow: hidden;
+        }
+        #list {
+            float: left;
+            display: flex;
+            display: -webkit-box;
+        }
+        #list li {
+            flex: none;
+            width: 100vw;
+        }
+        #list img {
+            width: 100%;
+            display: block;
+        }
+        .nav {
+            position: absolute;
+            left: 0;
+            bottom: .2rem;
+            width: 100%;
+            text-align: center;
+            vertical-align: top;
+        }
+        .nav a {
+            display: inline-block;
+            width: .3rem;
+            height: .3rem;
+            background: #fff;
+            margin: 0 .1rem;
+            border-radius: .15rem;
+            transition: .3s;
+        }
+        .nav .active {
+            width: .6rem;  
+            color: #fff;  
+        }
+        .textList {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .textList li {
+            font: 14px/40px "宋体";
+            padding-left: 20px;
+            border-bottom: 1px solid #000;
+        }
+    </style>
+</head>
+<body>  
+<div id="wrap">
+    <ul id="list">
+        <li><img src="img/banner01.png" /></li>
+        <li><img src="img/banner02.png" /></li>
+        <li><img src="img/banner03.png" /></li>
+        <li><img src="img/banner04.png" /></li>
+    </ul>
+    <nav class="nav">
+        <a class="active"></a><a></a><a></a><a></a>
+    </nav>
+</div>  
+<ul class="textList">
+
+</ul>
+<script>
+// 幻灯片
+{
+    let wrap = document.querySelector("#wrap");
+    let list = document.querySelector("#list");
+    list.innerHTML += list.innerHTML; // 把图片复制一份用来处理无缝
+    let startPoint = {};// 摁下时手指位置
+    let startX = 0; // 摁下时元素的位置
+    let translateX = 0; // 元素的 tranlateX 值
+    let now = 0; //记录当前在第几张
+    let navs = document.querySelectorAll(".nav a");
+    const RANGE = wrap.clientWidth*.3;//超过该幅度切换上一张下一张
+    wrap.addEventListener("touchstart",({changedTouches})=>{
+        list.style.transition = "none";
+        let touch = changedTouches[0];
+        startPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        if(now == 0){//第1组第0张会有划出去的风险
+            now = navs.length;
+        } else if(now == navs.length*2 - 1) { // 第2组最后一张，有划出去的风险
+            now = navs.length - 1;
+        }
+        translateX = -now*wrap.clientWidth;
+        list.style.WebkitTransform = list.style.transform = `translateX(${translateX}px)`;
+        startX = translateX;
+    });
+    wrap.addEventListener("touchmove",({changedTouches})=>{
+        let touch = changedTouches[0];
+        let nowPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        let dis = {
+            x: nowPoint.x - startPoint.x,
+            y: nowPoint.y - startPoint.y
+        };
+        translateX = startX + dis.x;
+        list.style.WebkitTransform = list.style.transform = `translateX(${translateX}px)`;
+    });
+    wrap.addEventListener("touchend",({changedTouches})=>{
+        let touch = changedTouches[0];
+        let nowPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        let dis = {
+            x: nowPoint.x - startPoint.x,
+            y: nowPoint.y - startPoint.y
+        };
+        // 当移动的距离超过图片宽度的 30% 时 切换至下一张或上一张,否则回到当前张
+        if(Math.abs(dis.x)>= RANGE){ // 切换上一张下一张
+            //console.log(dis.x,dis.x/Math.abs(dis.x));
+            now -= dis.x/Math.abs(dis.x);
+        }
+        //console.log(-now*wrap.clientWidth);
+        translateX = -now*wrap.clientWidth;
+        list.style.transition = ".3s";
+        list.style.WebkitTransform = list.style.transform = `translateX(${translateX}px)`;
+        navs.forEach(nav=>{
+            nav.classList.remove("active");
+        });
+        navs[now%navs.length].classList.add("active")
+    });
+}
+</script>
+</body>
+</html>

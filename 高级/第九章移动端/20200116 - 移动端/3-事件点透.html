@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            background: red;
+            opacity: .5;
+        }
+    </style>
+</head>
+<body>
+    <a href="http://www.baidu.com">百度</a>
+    <div id="box"></div> 
+<script>
+{
+    let box = document.querySelector("#box");
+    box.addEventListener("touchstart",function(e){
+        // setTimeout(()=>{
+        //     this.style.display = "none";
+        // },300);
+        this.style.display = "none";
+        e.preventDefault();
+    });
+    /*
+        事件点透
+            在移动端也支持我们的鼠标事件，不过有一些小问题
+            在移动端中，当我们触碰元素会立即执行加在该元素的 touch 事件，并且记录触碰时的手指位置，然后在 300ms 之后，在该坐标上查找元素，如果元素有mouse事件就执行
+
+        解决方案:
+            1. 给 touch 事件加延迟
+            2. 在移动端尽量不适用鼠标事件
+            3. 阻止默认事件
+    */
+}
+</script>       
+</body>
+</html>
