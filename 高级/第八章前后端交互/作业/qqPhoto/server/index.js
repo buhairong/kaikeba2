@@ -55,6 +55,11 @@ router.post('/test', koaJwt({secret: 'mytoken'}), ctx => {
     ctx.body = 'abc'
 })
 
+router.post('/upload', koaJwt({secret: 'mytoken'}), ctx => {
+    cors(ctx)
+    ctx.body = 'abcd'
+})
+
 router.post('/register', async ctx => {
     cors(ctx)
     let {username, password} = ctx.request.body

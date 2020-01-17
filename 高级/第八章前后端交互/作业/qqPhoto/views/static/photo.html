@@ -60,6 +60,7 @@
 
             <!-- 显示待上传图片  -->
             <div class="loadContainer">
+                <div>传输速度：<span class="speed">0</span>/S</div>
                 <div class="wantUpload">
                     <!-- <div class="uploadPhotoItem">
                         <span class="myProgress">
@@ -90,7 +91,6 @@
 <script>
     axios.interceptors.request.use(function(config) {
         const token = localStorage.getItem('token')
-        console.log('token', token)
         if(token) {
             config.headers['Authorization'] = 'Bearer ' + token
         }
@@ -110,6 +110,7 @@
     const mybtn = document.querySelector('.mybtn')
     const close = document.querySelector('.close')
     const masking = document.querySelector('.masking')
+    const uploadBtn = document.querySelector('.uploadBtn')
     let uploadArr = []
 
     mybtn.onclick = function() {
@@ -142,6 +143,17 @@
         })
     }
 
+    // 上传
+    uploadBtn.onclick = function() {
+        async function upload(){
+            // 依次上传
+            for(let i=0; i<uploadArr.length; i++) {
+                await uploadArr[i].uploadFile()
+            }
+        }
+        upload()
+    }
+
     class UploadImg{
         constructor(file) {
             this.file = file
@@ -168,6 +180,36 @@
                 document.querySelector('.wantUpload').appendChild(uploadDiv)
                 this.el = uploadDiv
             }
+        }
+
+        uploadFile() {
+            return new Promise((resolve, reject) => {
+                let form = new FormData()
+                form.append('img', this.file)
+
+                let xhr = new XMLHttpRequest()
+                xhr.open('post', 'http://localhost:4000/upload', true)
+                let token = localStorage.getItem('token')
+                if(token){
+                    xhr.setRequestHeader('Authorization', 'Bearer '+token)
+                }
+                xhr.send(form)
+                xhr.onload = function(){
+                    console.log(xhr.responseText)
+                }
+                xhr.upload.onprogress = (evt) => {
+                    console.log('文件已经上传大小：', evt.loaded)
+                    console.log('文件总大小：', evt.total)
+                    let percent = Math.round(evt.loaded / evt.total * 100)
+                    this.el.querySelector('.myProgress').style.display = 'block'
+                    this.el.querySelector('.plan').style.width = percent + '%'
+                    this.el.querySelector('.percentText').innerText = percent + '%'
+                    if(evt.loaded >= evt.total) {
+                        console.log('上传完成')
+                        resolve()
+                    }
+                }
+            })
         }
     }
 
