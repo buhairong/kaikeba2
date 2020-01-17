@@ -3,6 +3,8 @@ const Router = require('koa-router')
 const static = require('koa-static')
 const koaBody = require('koa-body')
 const mysql = require('mysql2')
+const jwt = require('jsonwebtoken')
+const koaJwt = require('koa-jwt')
 
 let app = new Koa()
 app.use(koaBody({
@@ -48,11 +50,9 @@ let cors = (ctx) => {
 
 }
 
-router.post('/test', ctx => {
+router.post('/test', koaJwt({secret: 'mytoken'}), ctx => {
     cors(ctx)
-    ctx.body = {
-        username: 'abc'
-    }
+    ctx.body = 'abc'
 })
 
 router.post('/register', async ctx => {
@@ -94,9 +94,17 @@ router.post('/login', async ctx => {
         let [rows] = await conection.promise().query(sql, [username, password])
         console.log(rows)
         if (rows.length > 0) {
+            // 签发token
+            // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjEsImlhdCI6MTU3OTA5MjE1NiwiZXhwIjoxNTc5MDk5MzU2fQ.l3DYPXazvkYrscvuVOuh-ufiR0j9kjTsQ3HkhKlyndY
+            // 前面2个都是通过base64编码
+            const token = jwt.sign({
+                _id: username
+            }, 'mytoken', {expiresIn: '2h'})
+
             result = {
                 status: 0,
-                msg: '登录成功'
+                msg: '登录成功',
+                token
             }
         } else {
             result = {

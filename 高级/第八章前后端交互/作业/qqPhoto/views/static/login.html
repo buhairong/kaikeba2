@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <script src="http://localhost:4000/temp" id="feed"></script>
   <link rel="stylesheet" href="/css/login.css" />
   <title>Document</title>
 </head>
@@ -47,7 +46,12 @@
       xhr.send(data)
       xhr.onload = function() {
           console.log(xhr.responseText)
-          if(!xhr.responseText.status) {
+          let res = JSON.parse(xhr.responseText)
+          if(!res.status) {
+              console.log('token', res.status)
+              console.log('token1', res.token)
+              localStorage.setItem('token', res.token)
+              console.log('token2', localStorage.getItem('token'))
               location.href = `photo.html?username=${username.value}`
           }
       }
