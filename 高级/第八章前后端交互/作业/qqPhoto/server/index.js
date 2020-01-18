@@ -72,9 +72,13 @@ router.post('/register', async ctx => {
         let [rows] = await conection.promise().query(sql, [username, password, Date.now()])
         console.log(rows)
         if (rows.affectedRows > 0) {
+            const token = jwt.sign({
+                _id: username
+            }, 'mytoken', {expiresIn: '2h'})
             result = {
                 status: 0,
-                msg: '注册成功'
+                msg: '注册成功',
+                token
             }
         } else {
             result = {

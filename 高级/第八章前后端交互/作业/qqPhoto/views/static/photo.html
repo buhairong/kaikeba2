@@ -112,6 +112,7 @@
     const masking = document.querySelector('.masking')
     const uploadBtn = document.querySelector('.uploadBtn')
     let uploadArr = []
+    let num = 0
 
     mybtn.onclick = function() {
         masking.style.display = 'block'
@@ -149,6 +150,14 @@
             // 依次上传
             for(let i=0; i<uploadArr.length; i++) {
                 await uploadArr[i].uploadFile()
+                num++
+            }
+            if(num >=uploadArr.length){
+                console.log('上传全部完成')
+                document.querySelector('.wantUpload').innerHTML = ''
+                document.querySelector('.showContainer').style.display = 'block'
+                document.querySelector('.loadContainer').style.display = 'none'
+                masking.style.display = 'none'
             }
         }
         upload()
@@ -164,27 +173,30 @@
             // 文件转换成base64
             let fileReader = new FileReader()
             fileReader.readAsDataURL(this.file)
-            fileReader.onload = () => {
+            let _this = this
+            fileReader.onload = function() {
                 let uploadDiv = document.createElement('div')
                 uploadDiv.classList.add('uploadPhotoItem')
                 uploadDiv.innerHTML = `
                     <span class="myProgress">
                         <span class="plan"></span>
-                        0%
+                        <span class="exchange"> 0%</span>
                     </span>
-                    <img src="${fileReader.result}" />
+                    <img src="${this.result}" />
                     <span class="pictureName">
-                        ${this.file.name}
+                        ${_this.file.name}
                     </span>
                 `
                 document.querySelector('.wantUpload').appendChild(uploadDiv)
-                this.el = uploadDiv
+                _this.el = uploadDiv
             }
         }
 
         uploadFile() {
             return new Promise((resolve, reject) => {
                 let form = new FormData()
+                let stime;
+                let sloaded;
                 form.append('img', this.file)
 
                 let xhr = new XMLHttpRequest()
@@ -193,22 +205,48 @@
                 if(token){
                     xhr.setRequestHeader('Authorization', 'Bearer '+token)
                 }
-                xhr.send(form)
-                xhr.onload = function(){
-                    console.log(xhr.responseText)
+
+                xhr.upload.onloadstart = function(){
+                    console.log('开始上传')
+                    stime = new Date().getTime()
+                    sloaded = 0
                 }
+
                 xhr.upload.onprogress = (evt) => {
-                    console.log('文件已经上传大小：', evt.loaded)
-                    console.log('文件总大小：', evt.total)
-                    let percent = Math.round(evt.loaded / evt.total * 100)
+                    //console.log('文件已经上传大小：', evt.loaded)
+                    //console.log('文件总大小：', evt.total)
+                    let endTime = new Date().getTime()
+                    // 时间差
+                    let dtime = (endTime - stime) / 1000
+                    // 当前时间内上传的文件大小
+                    let dloaded = evt.loaded - sloaded
+                    let speed = dloaded/dtime
+                    let unit = 'b/s'
+                    stime = new Date().getTime()
+                    sloaded = evt.loaded
+
+                    if(speed/1024 > 1) {
+                        unit = 'kb/s'
+                        speed = speed/1024
+                    }
+
+                    if(speed/1024 > 1) {
+                        unit = 'mb/s'
+                    }
+
+                    document.querySelector('.speed').innerHTML = speed.toFixed(2) + unit
+
+
                     this.el.querySelector('.myProgress').style.display = 'block'
-                    this.el.querySelector('.plan').style.width = percent + '%'
-                    this.el.querySelector('.percentText').innerText = percent + '%'
+                    let percent = Math.round(evt.loaded / evt.total * 100) + "%";
+                    this.el.querySelector(".plan").style.width = percent;
+                    this.el.querySelector(".exchange").innerHTML = percent;
                     if(evt.loaded >= evt.total) {
                         console.log('上传完成')
                         resolve()
                     }
                 }
+                xhr.send(form)
             })
         }
     }
