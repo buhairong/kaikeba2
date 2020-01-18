@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #info {
+            font-size: 30px;
+            line-height: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+ <div id="info">请在竖屏下浏览体验更佳</div>   
+<script>
+//alert(window.orientation);    
+    /*
+        window.orientation 
+            横屏: -90, 90
+            竖屏： 0 180
+    */
+// 监听横竖屏变化   
+// window.addEventListener("orientationchange",()=>{
+//     alert(window.orientation);  
+// }); 
+toInfo();
+window.addEventListener("orientationchange",toInfo);
+function toInfo(){
+    switch(window.orientation){
+        case 0:
+        case 180:
+            info.style.display = "none";
+            break;
+        case 90:
+        case -90:
+            info.style.display = "block";
+            break;
+    }
+}
+</script>    
+</body>
+</html>

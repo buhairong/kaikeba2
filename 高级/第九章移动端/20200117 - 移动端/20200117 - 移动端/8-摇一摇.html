@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="button" id="btn" value="开启摇一摇" />
+<script>
+function throttle(fn,interval=200,start = true){
+    if(typeof fn !== "function"){
+        return console.error("请传入一个函数");
+    }
+    let timer = 0;
+    return function(...arg){
+        let _this = this;
+        if(timer){
+            return ;
+        }
+        start&&fn.apply(_this,arg); 
+        timer = setTimeout(() => {
+            (!start)&&fn.apply(_this,arg); 
+            timer = 0;
+        }, interval);
+    }
+}    
+// 判断是否是 ios 设备    
+function getIos(){
+    var u = window.navigator.userAgent;
+    return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+}
+// 摇一摇
+function permissionForShake(fn){
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then((permissionState)=>{
+            if(permissionState === 'granted'){ //用户授权允许使用加速度信息
+                window.addEventListener("devicemotion",fn);  
+            }
+        }).catch((err)=>{
+            console.log(err);
+        })
+    } else {
+        window.addEventListener("devicemotion",fn); 
+    }
+}
+// 摇一摇：监听用户手机的加速度和上一次的加速之间有了特别大的幅度
+function shake(cb){ // cb 用户进行了摇一摇之后要做的事情
+    const maxRange = 60;
+    const minRange = 10;
+    let isShake = false;
+    let lastX=0,
+    lastY = 0,
+    lastZ = 0;
+    permissionForShake(throttle((e)=>{
+        let motion = e.acceleration;
+        let {x,y,z} = motion;
+        let range = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+        if(range > maxRange){//用户进行了摇一摇
+            isShake = true;
+        }
+        if(range < minRange&&isShake){ // 停止摇一摇
+            cb();
+            isShake = false;
+        }
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+    }));
+}    
+{
+    let btn = document.querySelector("#btn");
+    btn.onclick = function(){
+        shake(function(){
+            alert("您进行了摇一摇");
+        });
+    };
+}
+
+</script> 
+</body>
+</html>
