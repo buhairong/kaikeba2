@@ -58,11 +58,15 @@ router.post('/test', koaJwt({secret: 'mytoken'}), ctx => {
 
 router.post('/upload', koaJwt({secret: 'mytoken'}), async ctx => {
     cors(ctx)
-    console.log(ctx.request.files.img)
+    let token = ctx.header.authorization
+    console.log(token)
+    let data = token.substr(7).split('.')[1]
+    console.log(data)
+    let uid = JSON.parse(new Buffer(data, 'base64').toString())._id
+    console.log(uid)
     fs.writeFileSync('./static/upload/img/'+ctx.request.files.img.name,fs.readFileSync(ctx.request.files.img.path))
     let imgUrl = 'http://localhost:4000/upload/img/' + ctx.request.files.img.name
     let imgName = ctx.request.files.img.name
-    let uid = ctx.cookies.get('uid')
     let res
     let sql = 'INSERT INTO files(uid, imgUrl, imgName, createDate) VALUES(?, ?, ?, ?)'
     if(uid){
@@ -135,13 +139,13 @@ router.post('/login', async ctx => {
             // 签发token
             // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjEsImlhdCI6MTU3OTA5MjE1NiwiZXhwIjoxNTc5MDk5MzU2fQ.l3DYPXazvkYrscvuVOuh-ufiR0j9kjTsQ3HkhKlyndY
             // 前面2个都是通过base64编码
-            const token = jwt.sign({
-                _id: username
-            }, 'mytoken', {expiresIn: '2h'})
+
 
             let id = rows[0].id
             console.log(id)
-            ctx.cookies.set('uid', id, { maxAge: 3600*1000*24*7 })
+            const token = jwt.sign({
+                _id: id
+            }, 'mytoken', {expiresIn: '2h'})
 
             result = {
                 status: 0,
