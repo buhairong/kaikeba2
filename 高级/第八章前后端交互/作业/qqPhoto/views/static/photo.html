@@ -98,6 +98,7 @@
     },function(err) {
         console.log(err)
     })
+    axios.withCredentials = true
 
     test()
     function test() {
@@ -198,8 +199,54 @@
                 let stime;
                 let sloaded;
                 form.append('img', this.file)
+                let _this = this
+                axios({
+                    method: 'post',
+                    url: 'http://localhost:4000/upload',
+                    data: form,
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    onUploadProgress(evt){
+                        if(evt.lengthComputable){
+                            if(stime){
+                                let endTime = new Date().getTime()
+                                // 时间差
+                                let dtime = (endTime - stime) / 1000
+                                // 当前时间内上传的文件大小
+                                let dloaded = evt.loaded - sloaded
+                                let speed = dloaded/dtime
+                                let unit = 'b/s'
 
-                let xhr = new XMLHttpRequest()
+                                sloaded = evt.loaded
+
+                                if(speed/1024 > 1) {
+                                    unit = 'kb/s'
+                                    speed = speed/1024
+                                }
+
+                                if(speed/1024 > 1) {
+                                    unit = 'mb/s'
+                                }
+                                if(!isNaN(speed)){
+                                    document.querySelector('.speed').innerHTML = speed.toFixed(2) + unit
+                                }
+                            }
+                            stime = new Date().getTime()
+
+                            _this.el.querySelector('.myProgress').style.display = 'block'
+                            let percent = Math.round(evt.loaded / evt.total * 100) + "%";
+                            _this.el.querySelector(".plan").style.width = percent;
+                            _this.el.querySelector(".exchange").innerHTML = percent;
+                            if(evt.loaded >= evt.total) {
+                                console.log('上传完成')
+                                resolve()
+                            }
+                        }
+                    }
+                }).then(res => {
+                    console.log(res)
+                })
+
+                /*let xhr = new XMLHttpRequest()
                 xhr.open('post', 'http://localhost:4000/upload', true)
                 let token = localStorage.getItem('token')
                 if(token){
@@ -246,7 +293,7 @@
                         resolve()
                     }
                 }
-                xhr.send(form)
+                xhr.send(form)*/
             })
         }
     }

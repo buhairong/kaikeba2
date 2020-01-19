@@ -5,6 +5,7 @@ const koaBody = require('koa-body')
 const mysql = require('mysql2')
 const jwt = require('jsonwebtoken')
 const koaJwt = require('koa-jwt')
+const fs = require('fs')
 
 let app = new Koa()
 app.use(koaBody({
@@ -55,9 +56,36 @@ router.post('/test', koaJwt({secret: 'mytoken'}), ctx => {
     ctx.body = 'abc'
 })
 
-router.post('/upload', koaJwt({secret: 'mytoken'}), ctx => {
+router.post('/upload', koaJwt({secret: 'mytoken'}), async ctx => {
     cors(ctx)
-    ctx.body = 'abcd'
+    console.log(ctx.request.files.img)
+    fs.writeFileSync('./static/upload/img/'+ctx.request.files.img.name,fs.readFileSync(ctx.request.files.img.path))
+    let imgUrl = 'http://localhost:4000/upload/img/' + ctx.request.files.img.name
+    let imgName = ctx.request.files.img.name
+    let uid = ctx.cookies.get('uid')
+    let res
+    let sql = 'INSERT INTO files(uid, imgUrl, imgName, createDate) VALUES(?, ?, ?, ?)'
+    if(uid){
+        let [rows] = await conection.promise().query(sql, [uid, imgUrl, imgName, Date.now()])
+        if(rows.affectedRows) {
+            res = {
+                status: 0,
+                msg: '上传成功'
+            }
+        }else {
+            res = {
+                status: 2,
+                msg: '上传失败'
+            }
+        }
+    }else{
+        res = {
+            status: 1,
+            msg: '用户信息过期，请重新登录'
+        }
+    }
+
+    ctx.body = res
 })
 
 router.post('/register', async ctx => {
@@ -95,8 +123,9 @@ router.post('/register', async ctx => {
 
 router.post('/login', async ctx => {
     cors(ctx)
+    console.log(ctx)
     let {username, password} = ctx.request.body
-    let sql = 'SELECT username FROM user WHERE username = ? AND password = ?'
+    let sql = 'SELECT id FROM user WHERE username = ? AND password = ?'
     let result = []
 
     try{
@@ -109,6 +138,10 @@ router.post('/login', async ctx => {
             const token = jwt.sign({
                 _id: username
             }, 'mytoken', {expiresIn: '2h'})
+
+            let id = rows[0].id
+            console.log(id)
+            ctx.cookies.set('uid', id, { maxAge: 3600*1000*24*7 })
 
             result = {
                 status: 0,
