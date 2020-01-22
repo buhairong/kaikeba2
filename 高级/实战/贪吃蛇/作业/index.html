@@ -2,26 +2,92 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
     <style>
-        *{
+        * {
             margin: 0;
-            padding: 0;
         }
         #map{
             position: relative;
-            width: 400px;
-            height: 400px;
+            width: 80vw;
+            height: 80vw;
             background: #000;
-            margin: 10px 0 0 10px;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+        h1{
+            font-size: 5vw;
+        }
+        #grade {
+            color: red;
+        }
+        #control{
+            position: relative;
+            width: 75vw;
+            height: 45vw;
+            background: #ccc;
+            margin: 5vw auto;
+        }
+        .controlKey {
+            position: absolute;
+            width: 25vw;
+            height: 15vw;
+            background: red;
+            color: #fff;
+            line-height: 15vw;
+            text-align: center;
+            font-size: 10vw;
+        }
+        #left {
+            top: 15vw;
+            left: 0;
+        }
+        #top {
+            top: 0;
+            left: 25vw;
+        }
+        #right {
+            top: 15vw;
+            right: 0;
+        }
+        #bottom {
+            bottom: 0;
+            left: 25vw;
+        }
+        #start {
+            font-size: 5vw;
+        }
+        #menu {
+            padding-left:20px;
+            overflow: hidden;
+        }
+        #start {
+            float: left;
+        }
+        h1 {
+            float: left;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
+    <div id="menu">
+        <div id="start">开始游戏</div>
+        <h1>score: <span id="grade">0</span></h1>
+    </div>
+
     <div id="map"></div>
+    <div id="control">
+        <div id="left" class="controlKey">←</div>
+        <div id="top"  class="controlKey">↑</div>
+        <div id="right"  class="controlKey">→</div>
+        <div id="bottom"  class="controlKey">↓</div>
+    </div>
 </body>
 </html>
 <script>
+    // 地图
     class Map {
         constructor(el, rect = 10) {
             this.el = el
@@ -69,6 +135,7 @@
         }
     }
 
+    // 食物
     class Food {
         constructor(map, colors = ['red', 'blue', 'yellow', 'pink']) {
             this.map = map
@@ -88,24 +155,25 @@
         }
     }
 
+    // 蛇
     class Snake {
-        constructor(map, food) {
+        constructor(map) {
             this.map = map
-            this.food = food
             this.direction = 'right'
-            this.data = [
-                {x: 6, y: 4, color: 'green'},
-                {x: 5, y: 4, color: 'white'},
-                {x: 4, y: 4, color: 'white'},
-                {x: 3, y: 4, color: 'white'},
-                {x: 2, y: 4, color: 'white'}
-            ]
-            this.map.setData(this.data)
+            this.data = []
         }
 
         move() {
+            // 蛇尾巴加上吃到的食物
+            let i = this.data.length - 1
+            this.lastData = {
+                x: this.data[i].x,
+                y: this.data[i].y,
+                color: this.data[i].color
+            }
+
             /* 让后边每一格走到前一格的位置上 */
-            for(let i = this.data.length - 1; i > 0; i--) {
+            for(i; i > 0; i--) {
                 this.data[i].x = this.data[i-1].x
                 this.data[i].y = this.data[i-1].y
             }
@@ -129,7 +197,6 @@
         }
 
         changeDir(dir) {
-            console.log('dir', dir)
             /*
                 如果蛇本身在左右移动，只能修改让蛇上下移动，
                 如果蛇本身在上下移动，只能修改让蛇左右移动
@@ -144,45 +211,203 @@
                 }
             }
             this.direction = dir
-            console.log('direction', this.direction)
             return true
         }
 
         // 吃到了食物，蛇变大了
         eatFood() {
+            this.data.push(this.lastData)
+        }
+    }
 
+    // 游戏控制
+    class Game {
+        constructor(el, rect, toControl = null, toGrade = null) {
+            this.map = new Map(el, rect)
+            this.food = new Food(this.map)
+            this.snake = new Snake(this.map)
+            this.timer = 0
+            this.intervalTime = 200
+            this.toControl = toControl
+            this.keyDown = this.keyDown.bind(this)
+            this.control()
+            this.grade = 0
+            this.toGrade = toGrade
+            this.init()
+        }
+
+        init() {
+            this.snake.data = [
+                {x: 6, y: 4, color: 'green'},
+                {x: 5, y: 4, color: 'white'},
+                {x: 4, y: 4, color: 'white'},
+                {x: 3, y: 4, color: 'white'},
+                {x: 2, y: 4, color: 'white'}
+            ]
+            this.snake.direction = 'right'
+            this.map.setData(this.snake.data)
+            this.food.create()
+            this.grade = 0
+            this.map.render()
+        }
+
+        // 开始游戏
+        start() {
+            this.move()
+        }
+
+        //暂停游戏
+        stop() {
+            clearInterval(this.timer)
+        }
+
+        // 控制移动
+        move() {
+            this.stop()
+            this.timer = setInterval(() => {
+                this.snake.move()
+                this.map.clearData()
+
+                if(this.isEat()) {
+                    this.snake.eatFood()
+                    this.food.create()
+                    this.grade++
+                    this.changeGrade(this.grade)
+
+                    // 吃到食物后，速度加快
+                    /*this.intervalTime *= .9
+                    this.stop()
+                    this.start()*/
+                }
+
+                if(this.isOver()){
+                    this.over()
+                    return
+                }
+
+                this.map.setData(this.snake.data)
+                this.map.setData(this.food.data)
+                this.map.render()
+            }, this.intervalTime)
+        }
+
+        // 吃到食物，修改分数
+        changeGrade(grade) {
+            this.toGrade && this.toGrade(grade)
+        }
+
+        // 判断是否吃到食物
+        isEat() {
+            return this.snake.data[0].x === this.food.data.x && this.snake.data[0].y === this.food.data.y
+        }
+
+        // 游戏是否结束
+        isOver() {
+            if(this.snake.data[0].x < 0 || this.snake.data[0].x >= this.map.cells ||
+                this.snake.data[0].y < 0 || this.snake.data[0].y >= this.map.rows) {
+                return true
+            }
+
+            for(let i=1; i< this.snake.data.length; i++) {
+                if(this.snake.data[0].x === this.snake.data[i].x &&
+                    this.snake.data[0].y === this.snake.data[i].y
+                ) {
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        // 游戏结束
+        over() {
+            alert('游戏结束！')
+            this.stop()
+            this.grade = 0
+        }
+
+        keyDown({keyCode}) {
+            let isDir
+            switch(keyCode) {
+                case 37:
+                    isDir = this.snake.changeDir('left')
+                    break
+                case 38:
+                    isDir = this.snake.changeDir('top')
+                    break
+                case 39:
+                    isDir = this.snake.changeDir('right')
+                    break
+                case 40:
+                    isDir = this.snake.changeDir('bottom')
+                    break
+            }
+        }
+
+        addControl(fn) {
+            fn.call(this)
+            window.removeEventListener('keydown', this.keyDown)
+        }
+
+        // 控制器
+        control() {
+            if(this.toControl) {
+                this.toControl()
+                return
+            }
+            window.addEventListener('keydown', this.keyDown)
         }
     }
 
     let map = document.querySelector('#map')
-    let gameMap = new Map(map, 10)
-    let gameFood = new Food(gameMap)
-    let gameSnake = new Snake(gameMap, gameFood)
-    gameMap.render()
-    setInterval(() => {
-        gameSnake.move()
-        gameMap.clearData()
-        gameMap.setData(gameSnake.data)
-        gameMap.render()
-    }, 200)
+    let game = new Game(map, 10)
+    let gradeEl = document.querySelector('#grade')
+    let left = document.querySelector('#left')
+    let top1 = document.querySelector('#top')
+    let right = document.querySelector('#right')
+    let bottom = document.querySelector('#bottom')
+    let control = document.querySelector('#control')
+    let start = document.querySelector('#start')
 
-    setTimeout(() => {
-        gameSnake.changeDir('bottom')
-    }, 2000)
+    game.addControl(function() {
+        control.addEventListener('touchstart', ({target}) => {
+            if(target.id === 'left') {
+                this.snake.changeDir('left')
+            }else if(target.id === 'top') {
+                this.snake.changeDir('top')
+            }else if(target.id === 'right') {
+                this.snake.changeDir('right')
+            }else if(target.id === 'bottom') {
+                this.snake.changeDir('bottom')
+            }
+        })
 
-    setTimeout(() => {
-        gameSnake.changeDir('left')
-    }, 4000)
+        /*window.addEventListener('keydown', ({keyCode}) => {
+            let isDir
+            switch(keyCode) {
+                case 65:
+                    isDir = this.snake.changeDir('left')
+                    break
+                case 87:
+                    isDir = this.snake.changeDir('top')
+                    break
+                case 68:
+                    isDir = this.snake.changeDir('right')
+                    break
+                case 83:
+                    isDir = this.snake.changeDir('bottom')
+                    break
+            }
+        })*/
+    })
 
-    setTimeout(() => {
-        gameSnake.changeDir('top')
-    }, 6000)
-
-    /*setInterval(()=>{
-        gameFood.create()
-        gameMap.setData(gameFood.data)
-        gameMap.render()
-    },200)*/
+    game.toGrade = function(grade) {
+        gradeEl.innerHTML = grade
+    }
+    start.ontouchstart = function() {
+        game.init()
+        game.start()
+    }
 
 
 </script>
