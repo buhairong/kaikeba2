@@ -51,6 +51,18 @@ img {
     }
 }
 
+#pageBg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: url(../img/bg/bg.jpg) no-repeat;
+    background-size: 100% 100%;
+    opacity: 0;
+}
+
 #view {
     position: fixed;
     top: 0;
@@ -132,4 +144,49 @@ img {
     height: 8vw;
     background: center center no-repeat;
     background-size: cover;
+}
+
+.main,
+.tz,
+.pano-bg,
+.cloud,
+.pano,
+.pano-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+}
+
+.pano-bg span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: -585px 0 0 -64.5px;
+    width: 129px;
+    height: 1170px;
+    backface-visibility: hidden;
+    display: none;
+}
+.tz {
+    transform: translateZ(-800px);
+}
+/*.pano-bg {
+    animation: 3s loading1;
+}*/
+
+.cloud span {
+    position: absolute;
+    left: -100px;
+    top: -50px;
+    width: 200px;
+    height: 100px;
+}
+
+.pano-item span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 129px;
+    margin-left: -64.5px;
 }

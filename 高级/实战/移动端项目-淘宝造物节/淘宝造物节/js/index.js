@@ -1,5 +1,6 @@
 {
-    loadAnmt();
+    createPanoBg()
+    /*loadAnmt();
 	let view = document.querySelector("#view");
 	let main = document.querySelector(".main");
 	let deg = 52.5;
@@ -11,7 +12,7 @@
 		let R = Math.tan(deg*Math.PI/180)*(h/2);
 		view.style.perspective = R + "px";
 		css(main,"translateZ",R);
-	}
+	}*/
 }
 // 图片预加载
 function loadAnmt(){
