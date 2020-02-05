@@ -1,9 +1,9 @@
 {
-    loadend()
     //loadAnmt()
-    //createCloud()
-    // createPano()
-    // createPanoBg()
+    createPanoBg()
+    createPano()
+    let tz = document.querySelector('.tz')
+    css(tz, 'translateZ', -160)
 
     // 3D适配
     let view = document.querySelector('#view')
@@ -18,6 +18,7 @@
         view.style.perspective = R + 'px'
         css(main, 'translateZ', R)
     }
+    setTouch()
 }
 
 // 图片预加载
@@ -97,15 +98,20 @@ function loadend() {
     css(tz, 'translateZ', -2000)
     mTween({
         el: tz,
-        duration: 5000,
+        duration: 3000,
         attr: {
             translateZ: -160
-        }
+        },
+        fx: 'easeBoth'
     })
     setTimeout(() => {
         createPanoBg()
         anmtPanoBg()
     }, 500)
+    setTimeout(() => {
+        createPano()
+        anmtPano()
+    }, 2400)
 }
 
 // 圆柱背景
@@ -117,7 +123,7 @@ function createPanoBg() {
     let w = 129
     let R = Math.tan(innerDeg*Math.PI/180)*(w/2)
     panoBg.innerHTML = bg.map((item, index) => {
-        return `<span style="background: url(${item});transform:rotateY(-${index*outDeg}deg) translateZ(-${R}px);"></span>`
+        return `<span style="background: url(${item});transform:rotateY(${180-index*outDeg}deg) translateZ(-${R}px);display: block;"></span>`
     }).join('')
 }
 
@@ -128,7 +134,7 @@ function anmtPanoBg() {
     let timer = 0
     let nub = 0
     css(panoBg, 'rotateX', 0)
-    css(panoBg, 'rotateY', -795)
+    css(panoBg, 'rotateY', -650)
     timer = setInterval(() => {
         css(pano[nub++], 'display', 'block')
         if(nub === pano.length) {
@@ -137,7 +143,7 @@ function anmtPanoBg() {
     }, 50)
     mTween({
         el: panoBg,
-        duration: 5000,
+        duration: 2600,
         attr: {
             rotateY: 25
         },
@@ -185,7 +191,7 @@ function anmtCloud() {
     }, 50)
     mTween({
         el: cloudWrap,
-        duration: 4000,
+        duration: 2600,
         attr: {
             translateZ: -400,
             rotateY: 540
@@ -314,4 +320,94 @@ function createPano(){
         startDeg -= deg;
     }
     pano.appendChild(pano6);
+}
+
+// 漂浮层出场动画
+function anmtPano() {
+    let pano = document.querySelector('.pano')
+    css(pano, 'rotateX', 0)
+    css(pano, 'rotateY', -180)
+    css(pano, 'scale', 0)
+    mTween({
+        el: pano,
+        attr: {
+            rotateY: 25,
+            scale: 1
+        },
+        duration: 1200,
+        cb() {
+            anmtPageBg()
+        }
+    })
+}
+
+// 红色背景
+function anmtPageBg() {
+    let pageBg = document.querySelector('#pageBg')
+    css(pageBg, 'opacity', 1)
+}
+
+document.addEventListener('touchstart', (e)=>{
+    e.preventDefault()
+},{passive:false})
+
+// 滑屏
+function setTouch() {
+    let view = document.querySelector('#view')
+    let tz = document.querySelector('.tz')
+    let panoBg = document.querySelector('.pano-bg')
+    let pano = document.querySelector('.pano')
+    let startPoint = {}
+    let startDeg = {}
+    let z = 0
+    let scale = {
+        x: 1170/40/2,
+        y: 129/18/2
+    }
+
+    css(pano, 'rotateX', 0)
+    css(pano, 'rotateY', 25)
+    css(panoBg, 'rotateX', 0)
+    css(panoBg, 'rotateY', 25)
+
+    view.addEventListener('touchstart', (e) => {
+        let touch = e.changedTouches[0]
+        startPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        }
+        startDeg = {
+            x: css(panoBg, 'rotateX'),
+            y: css(panoBg, 'rotateY')
+        }
+        z = 0
+    })
+
+    view.addEventListener('touchmove', (e) => {
+        let touch = e.changedTouches[0]
+        let nowPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        }
+        let disPoint = {
+            x: nowPoint.x - startPoint.x,
+            y: nowPoint.y - startPoint.y
+        }
+        let nowDeg = {
+            x: startDeg.x + disPoint.y/scale.x,
+            y: startDeg.y - disPoint.x/scale.y
+        }
+        z++
+        nowDeg.x = nowDeg.x > 40 ? 40 : nowDeg.x
+        nowDeg.x = nowDeg.x < -40 ? -40 : nowDeg.x
+        let nowDeg2 = {
+            x: nowDeg.x,
+            y: startDeg.y - disPoint.x/scale.y*.9
+        }
+        css(panoBg, 'rotateX', nowDeg.x)
+        css(panoBg, 'rotateY', nowDeg.y)
+        css(pano, 'rotateX', nowDeg2.x)
+        css(pano, 'rotateY', nowDeg2.y)
+        css(tz, 'translateZ', -160-z)
+    })
 }
