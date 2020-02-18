@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux'
 import {BrowserRouter} from 'react-router-dom'
 import App from './App';
+import store from './store'
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <Provider store={}>
+    <Provider store={store}>
         <BrowserRouter>
             <App />
         </BrowserRouter>
@@ -17,3 +18,5 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+/* 3-6 */

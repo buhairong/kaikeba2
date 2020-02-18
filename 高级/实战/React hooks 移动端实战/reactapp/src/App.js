@@ -1,11 +1,12 @@
 import React from 'react';
+import IndexRoute from './router'
+import Frame from './common/component/frame'
 
 function App() {
   return (
-    <div className="App">
-
-
-    </div>
+    <Frame className="App">
+        <IndexRoute />
+    </Frame>
   );
 }
 
