@@ -11,6 +11,7 @@ function LoginBox(props) {
     const [vcodeSrc, setVcodeSrc] = useState('/miaov/user/verify?' + Date.now())
     let history = useHistory()
     let dispatch = useDispatch()
+    const {setDeg} = props
     const back = useBack(history)
 
     function toLogin() {
@@ -31,7 +32,7 @@ function LoginBox(props) {
     return (
         <div className="login_box">
             <figure className="user_img">
-                <img src="../../common/images/user_img.png" alt="" />
+                <img src={require('../../common/images/user_img.png')} alt="" />
                 <figcaption>如有账号，请直接登录</figcaption>
             </figure>
             <div className="login_form">
@@ -84,7 +85,11 @@ function LoginBox(props) {
                     className="form_btn"
                     onClick={toLogin}
                 >登录</button>
-                <p className="form_tip">没有帐号？<a href="#">立即注册</a></p>
+                <p className="form_tip">没有帐号？<a
+                    onClick={() => {
+                        setDeg(-180)
+                    }}
+                >立即注册</a></p>
             </div>
         </div>
     )

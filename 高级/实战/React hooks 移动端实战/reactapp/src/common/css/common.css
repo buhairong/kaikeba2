@@ -31,6 +31,7 @@
 }
 
 .header-user {
+  display: block;
   padding-right: .1rem;
   text-align: right;
   overflow: hidden;
@@ -42,6 +43,15 @@
   right: 0;
 }
 
+.header-logout-btn {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  top: 1.2rem;
+  text-align: center;
+  font: .3rem/.8rem "宋体";
+  background: #323436;
+}
 
 .logo {
   width: 2.44rem;
@@ -69,6 +79,13 @@
   padding-top: 1.2rem;
   min-height: 12.82666667rem;
   background: #f2f9fc;
+  transition: .5s;
+  box-sizing: border-box;
+}
+.pageWrap {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
 }
 #footer {
   background: #323436;

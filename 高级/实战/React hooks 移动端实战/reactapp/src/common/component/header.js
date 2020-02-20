@@ -1,27 +1,60 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link, withRouter, useLocation, useHistory} from 'react-router-dom'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {useBack} from '../hook'
-
-function getUser(path, user) {
-    if(path === '/login') {
-        return ''
-    }
-
-    if(user) {
-        return <span className="header-btn-right header-user">{user}</span>
-    }
-
-    return <Link className="user" to="/login" />
-}
+import isLogin from '../../store/action/isLogin'
+import logout from '../../store/action/logout'
 
 function Header(props) {
-    let location = useLocation()
-    let history = useHistory()
-    let back = useBack(history)
-    let user = useSelector(state => {
+    const location = useLocation()
+    const history = useHistory()
+    const dispatch = useDispatch()
+    const [isBtnShow, setBtnShow] = useState(false)
+    const back = useBack(history)
+    const user = useSelector(state => {
         return state.getUser
     })
+    let {changeShow} = props
+
+    useEffect(() => {
+        dispatch(isLogin())
+    }, [])
+
+    function getUser() {
+        if(location.pathname === '/login') {
+            return ''
+        }
+
+        if(user) {
+            return (
+                <span className="header-btn-right">
+                <span
+                    className="header-user"
+                    onClick={
+                        () => {
+                            setBtnShow(!isBtnShow)
+                        }
+                    }
+                >{user}</span>
+                <span
+                    className="header-logout-btn"
+                    style={{
+                        display: isBtnShow ? 'block' : 'none'
+                    }}
+                    onClick = {
+                        () => {
+                            dispatch(logout())
+                            setBtnShow(false)
+                        }
+                    }
+                >退出</span>
+            </span>
+            )
+        }
+
+        return <Link className="user" to="/login" />
+    }
+
     return (
         <header id="header">
             <nav className="menu">
@@ -31,14 +64,17 @@ function Header(props) {
                             className="header-btn-left iconfont icon-back"
                             onClick={back}
                         ></a>
-                        : <a className="header-btn-left iconfont icon-hycaidan"></a>
+                        : <a
+                            className="header-btn-left iconfont icon-hycaidan"
+                            onClick={
+                                changeShow
+                            }
+                        ></a>
                 }
-
-
             </nav>
             <h1 className="logo">miaov.com</h1>
             {
-                getUser(location.pathname, user)
+                getUser()
             }
         </header>
     )
