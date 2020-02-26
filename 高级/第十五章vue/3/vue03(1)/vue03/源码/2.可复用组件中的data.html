@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div id="app">
+
+        <p>app组件：{{a}}</p>
+
+        <kkb-component></kkb-component>
+    </div>
+
+    <script src="./js/vue.js"></script>
+
+    <script>
+
+        let kkbComponent = Vue.component('kkb-component', {
+
+            data() {
+                // 可复用组件中，data 必须是一个函数，且该函数必须返回一个对象，该对象就是组件最终的 data 值
+                return {
+                    b: 100
+                }
+            },
+
+            template: `
+                <div>
+                    开课吧 - {{b}}
+                </div>
+            `
+
+        });
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                a: 1
+            }
+        });
+
+        console.log(app, kkbComponent);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+
+    <h1>{{RMB(price)}}</h1>
+    <hr />
+    <h1>{{price|FRMB('$')}}</h1>
+
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+    Vue.filter('FRMB', function(price, flag='￥') {
+        return flag + ' ' + (price/100).toFixed(2);
+    });
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            // 分
+            price: 123124
+        },
+        methods: {
+            RMB(price) {
+                return '￥ ' + (price/100).toFixed(2);
+            }
+        }
+    });
+
+    // c(b(a('val', 1), '2'), 'kaikeba');
+
+    // 'val'|a(1)|b('2')|c('kaikeba')
+</script>
+
+</body>
+</html>

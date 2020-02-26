@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        [v-text] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <h1>hello，{{title}}</h1>
+    <hr>
+    <p v-text="title">hello，</p>
+    <hr>
+    <p v-cloak>{{title}}</p>
+    <hr>
+    <p v-html="content"></p>
+    <hr>
+    <p v-pre>{{title}}</p>
+    <hr>
+    <p v-show="isShow">{{title}}</p>
+    <hr>
+    <p v-if="isShow">{{title}}</p>
+    <hr>
+
+    <template v-if="isLogin">
+        <span>zmouse</span>
+        <hr>
+    </template>
+
+    <template v-else>
+        <hr>
+        <span>请登录</span>
+    </template>
+
+    <hr>
+    <div v-for="(val, key, index) in user">
+        {{val}} - {{key}} - {{index}}
+    </div>
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+
+
+    let app = new Vue({
+        // el: '#app',
+        data: {
+            title: '开课吧 - kaikeba',
+            content: '<h1>开课吧</h1>',    //xss
+            user: {
+                username: 'zmouse',
+                age: 30
+            },
+            arr: ['a', 'b'],
+            isShow: true,
+            isLogin: true
+        }
+    });
+
+    setTimeout(() => {
+        app.$mount('#app')
+    }, 1);
+
+
+</script>
+
+</body>
+</html>

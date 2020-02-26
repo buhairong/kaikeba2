@@ -1,11 +1,26 @@
 import React from 'react'
+import {NavLink} from 'react-router-dom'
+import {menuList} from '../../router/route_list'
 
-function Menu() {
+function Menu(props) {
+    let {menuHide} = props
     return (
         <nav id="menu">
-            <a className="iconfont icon-home">首页</a>
-            <a className="iconfont icon-kecheng">课程安排</a>
-            <a className="iconfont icon-peixunjiangshi">讲师团队</a>
+            {
+                menuList.map((item, index) => {
+                    return (
+                    <NavLink
+                        key={index}
+                        className={`iconfont ${item.icon}`}
+                        to={item.path}
+                        exact={item.exact}
+                        onClick={menuHide}
+                    >
+                        {item.name}
+                    </NavLink>
+                    )
+                })
+            }
         </nav>
     )
 }

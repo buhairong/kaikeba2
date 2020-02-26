@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+
+    <input type="text" v-model.lazy.number="n1" />
+    +
+    <input type="text" v-model.lazy.number="n2" />
+    =
+    {{n1+n2}}
+
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            n1: 0,
+            n2: 0
+        }
+    });
+
+
+
+</script>
+
+</body>
+</html>

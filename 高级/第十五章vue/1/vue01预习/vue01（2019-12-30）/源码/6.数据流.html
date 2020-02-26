@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+
+<!--    <input type="text" :value="n1" @change="changeN1">-->
+
+    <input type="text" v-model="n1" />
+
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            n1: 1
+        },
+        methods: {
+            // changeN1(e) {
+            //     this.n1 = e.target.value;
+            // }
+        }
+    });
+
+
+
+</script>
+
+</body>
+</html>

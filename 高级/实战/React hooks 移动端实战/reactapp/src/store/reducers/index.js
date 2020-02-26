@@ -1,10 +1,11 @@
 import getUser from './login'
-
-function index(state={}, action) {
-    return state
-}
+import works from './works'
+import lecturer from './lecturer'
+import work from './work'
 
 export  default {
-    index,
-    getUser
+    getUser,
+    works,
+    lecturer,
+    work
 }

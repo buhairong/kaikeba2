@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+
+<!--    <p>{{now}}</p>-->
+    <button @click="showDate=!showDate">showDate</button>
+    <hr>
+<!--    <p v-if="showDate">{{getNow()}}</p>-->
+    <p v-if="showDate">{{now}}</p>
+
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            showDate: false
+        },
+        computed: {
+            now:{
+                get() {
+                    return Date.now();
+                }
+            }
+        },
+        methods: {
+            getNow() {
+                return Date.now();
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>

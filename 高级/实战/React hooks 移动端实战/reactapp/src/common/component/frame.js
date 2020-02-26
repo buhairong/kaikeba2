@@ -9,7 +9,7 @@ import '../css/common.css'
 function Frame(props) {
     const [showMenu, setShowMenu] = useState(false)
     const innerH = useInnerHeight()
-    let pageScroll = null
+    const {pullUp, getData} = props
     let wrap = useRef(null)
 
     function changeShow() {
@@ -21,7 +21,25 @@ function Frame(props) {
     }
 
     useEffect(() => {
-        pageScroll = new BScroll(wrap.current)
+        let pageScroll = new BScroll(wrap.current, {
+            preventDefaultException: {
+                tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|A)$/,
+                className: /(^|\s)work_a(\s|$)/
+            },
+            pullUpLoad: pullUp ? {
+                threshold: 200
+            } : false
+        })
+        pageScroll.on('pullingUp', () => {
+            getData().then(res => {
+                if(res) {
+                    pageScroll.finishPullUp()
+                    pageScroll.refresh()
+                } else {
+                    pageScroll.closePullUp()
+                }
+            })
+        })
     }, [])
 
     return (
@@ -29,7 +47,9 @@ function Frame(props) {
             <Header
                 changeShow = {changeShow}
             />
-            <Menu />
+            <Menu
+                menuHide = {menuHide}
+            />
             <div
                 id="main"
                 style={{

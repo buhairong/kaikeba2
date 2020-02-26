@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+    {{title}}
+    <hr>
+    <p>用户名：{{user.username}}</p>
+    <p>年龄：{{user.age}}</p>
+    <hr>
+    {{arr}}
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            title: '开课吧 - kaikeba',
+            user: {
+                username: 'zmouse'
+            },
+            arr: ['a', 'b']
+        }
+    });
+
+    /**
+     * 注意
+     *  在 data 中避免（禁止）创建 以 _ 或 $ 开头的数据名称
+     */
+    console.log(app);
+
+
+</script>
+
+</body>
+</html>

@@ -40,7 +40,7 @@ const routeList = [
     },
     {
         name: '作品详情',
-        path: '/work',
+        path: '/work/:id',
         exact: true,
         render: (props) => {
             return <Work {...props} />
@@ -48,4 +48,28 @@ const routeList = [
     }
 ]
 
+const menuList = [
+    {
+        name: '首页',
+        path: '/',
+        exact: true,
+        icon: 'icon-home'
+    },
+    {
+        name: '课程安排',
+        path: '/course',
+        exact: true,
+        icon: 'icon-kecheng'
+    },
+    {
+        name: '讲师团队',
+        path: '/lecturer',
+        exact: true,
+        icon: 'icon-peixunjiangshi'
+    }
+]
+
 export default routeList
+export  {
+    menuList
+}

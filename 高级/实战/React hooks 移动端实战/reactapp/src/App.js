@@ -4,9 +4,9 @@ import Frame from './common/component/frame'
 
 function App() {
   return (
-    <Frame className="App">
+    <div className="App">
         <IndexRoute />
-    </Frame>
+    </div>
   );
 }
 

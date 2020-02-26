@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .checked {
+            background: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <button @click="v1++">按钮</button>
+    {{v1}}
+
+    <hr>
+    <button @click="fn">按钮</button>
+    {{v2}}
+
+    <hr>
+    <ul>
+        <li
+            v-for="user in users"
+            :class="{'checked': user.checked}"
+            @click="doCheck(user, $event)"
+        >
+<!--  $event 是固定写法    -->
+            {{user.username}}
+        </li>
+    </ul>
+
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+    // function fn() {
+    //     console.log(1);
+    // }
+    // let v2 = 100;
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            v1: 1,
+            v2: 1,
+            users: [
+                {id: 1, username: 'zmouse', checked: false},
+                {id: 2, username: 'mozi', checked: false},
+                {id: 3, username: 'haizi', checked: false}
+            ]
+        },
+        methods: {
+            fn(e) {
+                // vue 中事件函数的this指向该组件实例 : app
+                this.v2++;
+                //默认情况下，函数的第一个参数是事件对象：event
+                console.log(e);
+                // 但是，如果该函数不是直接被事件调用
+                // 看列表的例子
+            },
+            doCheck(user, e) {
+                // console.log(e)
+                user.checked = !user.checked;
+            }
+
+        }
+    });
+
+
+
+    // function fn(user, e) {
+    //     console.log(e)
+    // }
+    //
+    // document.onclick = function($event) {
+    //     fn('', $event);
+    // };
+
+
+</script>
+
+</body>
+</html>

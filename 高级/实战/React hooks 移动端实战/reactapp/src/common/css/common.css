@@ -168,9 +168,39 @@
 #menu a:before {
   font-size: .4rem;
   margin: 0 .1rem;
-  color: rgba(255, 255, 255, .6);
   vertical-align: middle;
 }
 #menu a:first-child {
   border-top: 1px solid rgba(255, 255, 255, .3);
+}
+#menu a.active,#menu a.active:before {
+  color: #fff;
+}
+
+.skeleton .skeleton-row {
+  display: flex;
+}
+
+@keyframes skeletion {
+  0% {
+    background: #999;
+  }
+  100% {
+    background: #ccc;
+  }
+}
+
+.skeleton .skeleton-row span{
+  flex: 1;
+  margin: 10px;
+  height: 10px;
+  background: #999;
+}
+
+.skeleton .skeleton-row:nth-child(2n) span {
+  animation: skeletion 2s infinite alternate;
+}
+
+.skeleton .skeleton-row:nth-child(2n+1) span {
+  animation: skeletion 1.5s .2s infinite alternate;
 }
