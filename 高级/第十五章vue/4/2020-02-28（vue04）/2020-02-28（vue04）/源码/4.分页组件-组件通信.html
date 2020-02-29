@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination a {
+            padding: 5px 12px;
+            border: 1px solid #3ba9ff;
+            text-decoration: none;
+            margin: 5px;
+        }
+        .pagination a.active {
+            background: #3ba9ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+
+        <ul>
+            <li v-for="user of users" :key="user.id">
+                {{user.name}}
+            </li>
+        </ul>
+
+        <k-pagination :pages="uPages" :page="uPage"></k-pagination>
+
+
+    </div>
+
+    <script src="./js/vue.js"></script>
+    <script>
+        /**
+         * 组件通信
+         *  父->子
+         *      父级调用子元素，通过子元素的属性方式传入数据
+         *      子级内部通过 props 配置项 来接受对应的数据
+         */
+        Vue.component('k-pagination', {
+            props: ['pages', 'page'],
+            template: `
+                <div class="pagination">
+                    <a href="">上一页</a>
+                    <a href="" v-for="p of pages" :class="{'active': p === page}">{{p}}</a>
+                    <a href="">下一页</a>
+                </div>
+            `
+        });
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                users: [
+                    {id: 1, name: '莫涛'},
+                    {id: 2, name: '大海'},
+                    {id: 3, name: '紫薯'},
+                    {id: 4, name: '宝哥'},
+                    {id: 5, name: '小姐姐'},
+                    {id: 6, name: '央央'},
+                    {id: 7, name: 'licas'},
+                ],
+                uPage: 1,
+                uPages: 10
+            }
+        });
+
+
+    </script>
+
+</body>
+</html>

@@ -72,27 +72,17 @@
   font-family: fzlt;
   padding-top: 0.42666667rem;
   padding-bottom: 0.46666667rem;
-}
-.miiaov_article h3 span {
-  display: block;
-}
-.miiaov_article h3 span:nth-of-type(1) {
   font-size: 0.53333333rem;
   line-height: 0.61333333rem;
-}
-.miiaov_article h3 span:nth-of-type(2) {
-  font-size: 0.48rem;
-  text-indent: 1.4rem;
-  line-height: 0.57333333rem;
+
 }
 .miiaov_txt {
   font: 0.32rem / 0.53333333rem "宋体";
   word-break: break-all;
   color: #312f2f;
 }
-.miiaov_txt .miiaov_img {
-  height: 7.46666667rem;
-  background: #f8ad45;
+.miiaov_txt img {
+  max-width: 100%;
   margin: 0.46666667rem 0;
 }
 .miiaov_txt a {
@@ -110,13 +100,12 @@
 }
 .miiaov_zan span:nth-of-type(2) {
   float: right;
-  width: 0.36rem;
-  height: 0.32rem;
-  text-indent: -999em;
-  overflow: hidden;
-  background: url('../images/zan_black.png') no-repeat 0 0 / 100% 100%;
-  margin-top: 0.28rem;
   margin-right: 0.26666667rem;
+  font-size: .2rem;
+  color: #312f2f;
+}
+.miiaov_zan span.good {
+  color: #e15672;
 }
 .output {
   padding-top: 0.06666667rem;

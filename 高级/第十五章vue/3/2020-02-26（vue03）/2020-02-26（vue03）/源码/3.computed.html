@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .active {
+            background: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+
+        <div>
+            <button :class="{active: gender === ''}" @click="gender = ''">全部</button>
+            <button :class="{active: gender === '男'}" @click="gender = '男'">大老爷们</button>
+            <button :class="{active: gender === '女'}" @click="gender = '女'">小姐姐</button>
+        </div>
+
+        <hr />
+
+        <ul>
+            <li v-for="user of showUsers">
+                <input type="checkbox" v-model="user.checked" /> {{user.username}}
+            </li>
+        </ul>
+
+        <hr />
+
+        <input type="checkbox" v-model="checkedAll" /> 全选
+
+    </div>
+
+    <script src="./js/vue.js"></script>
+    <script>
+
+        let users = [
+            {id: 1, username: 'baogege', gender: '男',checked:false},
+            {id: 2, username: 'mt', gender: '男',checked: true},
+            {id: 3, username: 'haigege', gender: '男',checked:false},
+            {id: 4, username: 'zMouse', gender: '男',checked:false},
+            {id: 5, username: 'reci', gender: '女',checked:false},
+            {id: 6, username: 'lisi', gender: '女',checked:false}
+        ];
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                users,
+                gender: '',
+                // checkedAll 属性：它的值其实是由users中每一个数据的checked值来决定
+                // checkedAll: false
+            },
+            computed: {
+                showUsers: {
+                    // get 方法定义该属性是如何得到值的
+                    get() {
+                        if (this.gender === '') {
+                            return this.users;
+                        } else {
+                            return this.users.filter( user => user.gender === this.gender );
+                        }
+                    }
+                },
+                checkedAll: {
+                    get() {
+                        return this.users.every(user => user.checked);
+                    },
+                    set(newVal) {
+                        // console.log(newVal);
+                        this.users = this.users.map(user => {
+                            return {...user, ...{checked: newVal}};
+                        })
+                    }
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>

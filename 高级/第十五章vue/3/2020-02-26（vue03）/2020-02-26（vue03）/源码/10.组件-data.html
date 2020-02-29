@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .active {
+            background: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+
+        <h1>{{title}}</h1>
+
+        <k-div></k-div>
+
+    </div>
+
+    <script src="./js/vue.js"></script>
+    <script>
+
+
+        Vue.component('kDiv', {
+            data(){
+                return {
+                    name: '开课吧'
+                }
+            },
+            template: `
+                <div>
+                    <div>{{name}}</div>
+                </div>
+            `
+        });
+
+        let app = new Vue({
+            data: {
+                title: 'vue'
+            },
+            el: '#app'
+        });
+
+    </script>
+
+</body>
+</html>

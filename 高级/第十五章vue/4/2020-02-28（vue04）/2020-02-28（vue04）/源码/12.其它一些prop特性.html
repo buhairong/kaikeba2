@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div id="app">
+
+        <k-child a="1" b="2" c="1" style="background: yellow;color:red;"></k-child>
+
+    </div>
+
+    <script src="./js/vue.js"></script>
+    <script>
+
+
+
+        new Vue({
+            el: '#app',
+            components: {
+                kChild: {
+                    inheritAttrs: false,
+                    props: ['a', 'b'],
+                    template: `
+                        <div style="color:green;">Child - a:{{a}} - b:{{b}}</div>
+                    `
+                }
+            }
+        });
+
+        // let obj = {
+        //     a: 1,
+        //     a: 2
+        // }
+
+    </script>
+
+</body>
+</html>
