@@ -21,7 +21,9 @@ function Main(props) {
                         goodNum = {data.good}
                         id = {data.id}
                     />
-                    <MessageList />
+                    <MessageList
+                        id = {data.id}
+                    />
                 </article>
             </div>
         </div>

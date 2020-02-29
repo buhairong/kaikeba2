@@ -3,6 +3,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {useParams} from 'react-router-dom'
 import Frame from '../../common/component/frame'
 import getWork from '../../store/action/getWork'
+import getMessageList from '../../store/action/getMessageList'
 import Skeleton from '../../common/component/skeleton'
 import Tab from '../../common/component/tab'
 import Main from './main'
@@ -13,6 +14,7 @@ function Work(props) {
     let dispatch = useDispatch()
     let params = useParams()
     let {id} = params
+    let {page} = useSelector(state => state.messageList)
 
     /*
         useMemo: 组件挂载之前
@@ -20,9 +22,13 @@ function Work(props) {
     */
     useEffect(() => {
         dispatch(getWork(id))
+        dispatch(getMessageList(id, page))
         return () => { // 组件卸载时调用
             dispatch({
                 type: 'work_reset'
+            })
+            dispatch({
+                type: 'message_reset'
             })
         }
     }, [])

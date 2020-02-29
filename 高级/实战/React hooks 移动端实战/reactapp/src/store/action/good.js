@@ -5,7 +5,6 @@ function getGood(id) {
        return Http.post('/lecturer/getgood', {
            article_id: id
        }).then(res => {
-           console.log(res)
            if(res.data.code === 0) {
                dispatch({
                    type: 'good',
@@ -25,7 +24,6 @@ function setGood(id) {
         return Http.post('/lecturer/good', {
             article_id: id
         }).then(res => {
-            console.log(res)
             if(res.data.code === 0) {
                 dispatch(getGood(id))
             }
