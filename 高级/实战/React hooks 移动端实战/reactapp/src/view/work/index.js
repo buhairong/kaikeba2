@@ -16,13 +16,18 @@ function Work(props) {
     let {id} = params
     let {page} = useSelector(state => state.messageList)
 
+    function getMessagesData() {
+        return dispatch(getMessageList(id, page))
+    }
+
     /*
         useMemo: 组件挂载之前
         useEffect: 组件挂载、更新之后
     */
     useEffect(() => {
         dispatch(getWork(id))
-        dispatch(getMessageList(id, page))
+        //getMessagesData()
+
         return () => { // 组件卸载时调用
             dispatch({
                 type: 'work_reset'
@@ -35,7 +40,10 @@ function Work(props) {
 
     return (
         <div>
-            <Frame>
+            <Frame
+                pullUp = {true}
+                getData = {getMessagesData}
+            >
                 {
                     loading ? <Skeleton /> : (<Main
                         data = {data}

@@ -1,16 +1,28 @@
-import React from 'react'
-import {useSelector} from 'react-redux'
+import React, {useEffect} from 'react'
+import {useSelector, useDispatch} from 'react-redux'
+import getMessageList from '../../store/action/getMessageList'
 
-function MessageList() {
-    let {messageList} = useSelector(state => state.messageList)
-    console.log(messageList)
+function MessageList(props) {
+    let {id} = props
+    let {messageList, page} = useSelector(state => state.messageList)
+    let dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(getMessageList(id, page))
+
+        return () => { // 组件卸载时调用
+            dispatch({
+                type: 'message_reset'
+            })
+        }
+    }, [])
 
     return (
         <ul className="comment_list">
             {
-                messageList.map(item => {
+                messageList.map((item, index) => {
                     return (
-                        <li key = {item.create_time}>
+                        <li key = {index}>
                             <div className="user_comment clearfix">
                                 <span>{item.username}</span>
                             </div>

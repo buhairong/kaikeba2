@@ -1,6 +1,7 @@
 import Http from './http'
 
 function getMessageList(id, page) {
+    console.log(id, page)
     return function(dispatch) {
         return Http.post(`/lecturer/getcomment?page=${page}&rows=10`, {
             article_id: id
