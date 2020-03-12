@@ -11,10 +11,11 @@
                 <el-input placeholder="请输入用户名" v-model="loginForm.username"/>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-                <el-input placeholder="请输入密码" v-model="loginForm.password" />
+                <el-input type="password" placeholder="请输入密码" v-model="loginForm.password" />
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="login">登录</el-button>
+                <el-button type="primary" @click="$router.go(-1)">返回首页</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -57,6 +58,15 @@
                             data: {
                                 username,
                                 password
+                            }
+                        }).then(res => {
+                            const data = res.data
+                            if(data.code) {
+                                this.$message.error(data.msg)
+                            } else {
+                                localStorage.setItem('token', data.token)
+                                this.$store.commit('setUsername', username)
+                                this.$router.push('/')
                             }
                         })
                     }

@@ -1,7 +1,17 @@
 <template>
     <div class="header">        
         <div class="userinfo">
-            <div class="btnGroup">
+            <div class="username" v-if="username">
+                <el-dropdown>
+                    <span class="el-dropdown-link">
+                        {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
+            <div class="btnGroup" v-else>
                 <router-link to="/login">
                     <el-button type="primary">登录</el-button>
                 </router-link>
@@ -15,8 +25,20 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
+
 export default {
-  name: 'Header',
+    name: 'Header',
+    computed: {
+        ...mapState(['username'])
+    },
+    methods: {
+        logout() {
+            this.$store.commit('setUsername', '')
+            localStorage.removeItem('token')
+            this.$router.push('/')
+        }
+    }
 }
 </script>
 
@@ -39,5 +61,9 @@ export default {
     }
     .el-button {
         margin-right: 20px;
+    }
+    .username {
+        padding-right: 30px;
+        cursor: default;
     }
 </style>

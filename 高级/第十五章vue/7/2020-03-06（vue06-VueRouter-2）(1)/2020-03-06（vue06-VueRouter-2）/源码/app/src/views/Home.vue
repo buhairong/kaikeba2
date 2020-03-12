@@ -65,7 +65,7 @@
         },
 
         // koa => next => 守卫！！！
-        beforeRouteUpdate(to, from, next) {
+       /* beforeRouteUpdate(to, from, next) {
             // console.log('beforeRouteUpdate');
             console.log(to, from);
 
@@ -73,7 +73,7 @@
             next();
 
             this.getItems();
-        },
+        },*/
 
         methods: {
             getItems() {

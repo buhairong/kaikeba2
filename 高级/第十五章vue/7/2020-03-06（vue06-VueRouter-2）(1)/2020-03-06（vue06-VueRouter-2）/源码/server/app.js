@@ -19,9 +19,9 @@ app.use( async (ctx, next) => {
     // ctx.set('Access-Control-Allow-Headers', 'Content-Type');
     // ctx.set('Access-Control-Allow-Credentials', true);
 
-    await next();
+    await next()
 } );
-
+;
 app.use(KoaBodyParser());
 
 const router = new KoaRouter();
