@@ -2,6 +2,9 @@
     <div class="header">        
         <div class="userinfo">
             <div class="username" v-if="username">
+                <router-link to="/cart">
+                    <el-link type="primary">我的购物车</el-link>
+                </router-link>
                 <el-dropdown>
                     <span class="el-dropdown-link">
                         {{username}}<i class="el-icon-arrow-down el-icon--right"></i>

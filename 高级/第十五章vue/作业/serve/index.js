@@ -12,6 +12,16 @@ let app = new Koa()
 app.use(koaBody())
 let router = new Router()
 
+router.get('/getItems', ctx => {
+    const sort = ctx.request.query.sort || ''
+    if(sort) {
+        let res = [...items].sort((a, b) => sort === 'asc' ? a.price - b.price : b.price - a.price)
+        ctx.body = res
+    } else {
+        ctx.body = items
+    }
+})
+
 router.post('/login', ctx => {
     const {username, password} = ctx.request.body
     let result = {}

@@ -1,0 +1,1 @@
+export default '这是b模块默认导出都数据';
