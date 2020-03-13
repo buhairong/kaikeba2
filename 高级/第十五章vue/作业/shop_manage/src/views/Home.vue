@@ -10,9 +10,7 @@
                         :value="item.value">
                 </el-option>
             </el-select>
-            <el-table
-                    :data="items"
-                    style="width: 100%">
+            <el-table :data="items">
                 <el-table-column label="商品名称">
                     <template slot-scope="scope">
                         <span class="goodName" @click="showDetail(scope.$index, scope.row)">{{ scope.row.name }}</span>

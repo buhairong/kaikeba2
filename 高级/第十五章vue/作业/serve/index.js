@@ -6,6 +6,18 @@ const koaJwt = require('koa-jwt')
 
 let users = require('./data/users.json')
 let items = require('./data/items.json')
+let cartId = 0;
+let cart = {
+    /*"mt": [
+        {
+            cartId: 1,
+            goodId: 1,
+            goodName: 'Redmi K20',
+            price: '199900',
+            number: 3
+        }
+    ]*/
+}
 
 let app = new Koa()
 
@@ -79,6 +91,8 @@ router.post('/reg', ctx => {
 
     ctx.body = result
 })
+
+
 
 app.use(router.routes())
 app.listen(4000)
