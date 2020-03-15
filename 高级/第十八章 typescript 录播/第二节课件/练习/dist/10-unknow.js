@@ -1,0 +1,10 @@
+var c1 = '开课吧';
+var d11 = 1;
+d11.toFixed(1);
+d11 = c1;
+d11.toFixed(1);
+var c12 = '开课吧';
+var d12 = 1;
+d12.toFixed(1);
+d12 = c12;
+d12.toFixed(1);
