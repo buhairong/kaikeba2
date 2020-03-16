@@ -92,7 +92,88 @@ router.post('/reg', ctx => {
     ctx.body = result
 })
 
+router.get('/getUserCartNum', koaJwt({secret: 'mytoken'}), ctx => {
+    const {username} = ctx.request.query
+    let result = {}
+    let total = 0
+    if(cart[username]) {
+        cart[username].forEach(item => total += item.number)
+        result = {
+            code: 0,
+            total
+        }
+    } else {
+        result = {
+            code: 0,
+            total
+        }
+    }
 
+    ctx.body = result
+})
+
+router.get('/getUserCart', koaJwt({secret: 'mytoken'}), ctx => {
+    const {username} = ctx.request.query
+    let result = {}
+    if(cart[username]) {
+        console.log(1)
+        result = {
+            code: 0,
+            userCart: cart[username]
+        }
+    } else {
+        console.log(2)
+        result = {
+            code: 0,
+            userCart: []
+        }
+    }
+    ctx.body = result
+})
+
+router.post('/addCart', koaJwt({secret: 'mytoken'}), ctx => {
+    const {username, good} = ctx.request.body
+    let userCart = cart[username]
+
+    if(userCart) {
+        const isAdded = userCart.find(item => item.goodId === good.id)
+        if(isAdded) {
+            cart[username].map(item => {
+                if(item.goodId === good.id) {
+                    item.number += 1
+                }
+                return item
+            })
+        } else {
+            cart[username].push({
+                cartId: ++cartId,
+                goodId: good.id,
+                goodName: good.name,
+                price: good.price,
+                number: 1
+            })
+        }
+    } else {
+        cart[username] = [
+            {
+                cartId: ++cartId,
+                goodId: good.id,
+                goodName: good.name,
+                price: good.price,
+                number: 1
+            }
+        ]
+    }
+
+    ctx.body = {
+        code: 0,
+        msg: '添加成功'
+    }
+})
+
+router.post('/changeCart', koaJwt({secret: 'mytoken'}), ctx => {
+
+})
 
 app.use(router.routes())
 app.listen(4000)

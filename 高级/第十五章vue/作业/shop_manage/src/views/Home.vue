@@ -27,7 +27,7 @@
                         <span>{{ scope.row.price | RMB }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="添加到购物车">
+                <el-table-column label="添加到购物车" v-if="username">
                     <template slot-scope="scope">
                         <el-button @click="addCart(scope.$index, scope.row)">添加到购物车</el-button>
                     </template>
@@ -50,6 +50,7 @@
 
 <script>
 import Header from '../components/Header.vue'
+import {mapState} from 'vuex'
 
 export default {
 
@@ -84,12 +85,21 @@ export default {
             return '¥' + (val/100).toFixed(2)
         }
     },
+    computed: {
+        ...mapState(['username'])
+    },
     created() {
         this.getItems()
     },
     watch: {
         sort() {
             this.getItems()
+        },
+        username(val) {
+            console.log(val)
+            if(val) {
+                this.getCartTotal()
+            }
         }
     },
     methods: {
@@ -105,11 +115,38 @@ export default {
             })
         },
         addCart(index, row) {
-            console.log(index, row)
+            if(this.username) {
+                this.axios({
+                    method: 'post',
+                    url: '/api/addCart',
+                    data: {
+                        username: this.username,
+                        good: row
+                    }
+                }).then(res => {
+                    if(!res.data.code) {
+                        this.$message.info('已加入购物车')
+                        this.$store.commit('addCartTotal')
+                    }
+                })
+            }
         },
         showDetail(index, row) {
             this.activeItem = row
             this.dialogVisible = true
+        },
+        getCartTotal() {
+            this.axios({
+                method: 'get',
+                url: '/api/getUserCartNum',
+                params: {
+                    username: this.username
+                }
+            }).then(res => {
+                if(!res.data.code) {
+                    this.$store.commit('initCartTotal', res.data.total)
+                }
+            })
         }
     }
 }

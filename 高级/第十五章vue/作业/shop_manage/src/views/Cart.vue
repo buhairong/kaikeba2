@@ -1,58 +1,65 @@
 <template>
     <div>
         <Header />
-
+        <el-table :data="userCart">
+            <el-table-column
+                    prop="goodName"
+                    label="商品名称">
+            </el-table-column>
+            <el-table-column
+                    prop="price"
+                    label="价格">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.price | RMB }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="数量">
+                <template slot-scope="scope">
+                    <el-button :disabled="scope.row.number >= 0" @click="addCart(scope.$index, scope.row)">-</el-button>
+                    {{scope.row.number}}
+                    <el-button @click="addCart(scope.$index, scope.row)">+</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
     </div>
 </template>
 
 <script>
     import Header from '../components/Header.vue'
+    import {mapState} from 'vuex'
+    import RMB from '../filters/RMB'
 
     export default {
         data() {
           return {
-              loginForm: {
-                  username: '',
-                  password: '',
-              },
-              rules: {
-                  username: [
-                      { required: true, message: '请输入用户名', trigger: 'blur' }
-                  ],
-                  password: [
-                      { required: true, message: '请输入密码', trigger: 'blur' }
-                  ]
-              }
+              userCart: []
           }
         },
         components: {
             Header
         },
-        mounted() {
-
+        computed: {
+            ...mapState(['username'])
+        },
+        filters: {
+            RMB
+        },
+        created() {
+            this.getUserCart()
         },
         methods: {
-            login() {
-                this.$refs.loginForm.validate(valid => {
-                    if(valid) {
-                        const {username, password} = this.loginForm
-                        this.axios({
-                            method: 'post',
-                            url: '/api/login',
-                            data: {
-                                username,
-                                password
-                            }
-                        }).then(res => {
-                            const data = res.data
-                            if(data.code) {
-                                this.$message.error(data.msg)
-                            } else {
-                                localStorage.setItem('token', data.token)
-                                this.$store.commit('setUsername', username)
-                                this.$router.push('/')
-                            }
-                        })
+            getUserCart() {
+                this.axios({
+                    method: 'get',
+                    url: '/api/getUserCart',
+                    params: {
+                        username: this.username
+                    }
+                }).then(res => {
+                    if(res.data.code) {
+                        this.$message.error(res.data.msg)
+                    }else {
+                        this.userCart = res.data.userCart
                     }
                 })
             }
@@ -61,8 +68,8 @@
 </script>
 
 <style scoped>
-    .el-form {
-        margin: 20px auto 0;
-        width: 500px;
+    .el-table {
+        padding: 30px;
     }
+
 </style>

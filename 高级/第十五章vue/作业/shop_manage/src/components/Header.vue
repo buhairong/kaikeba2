@@ -2,8 +2,10 @@
     <div class="header">        
         <div class="userinfo">
             <div class="username" v-if="username">
-                <router-link to="/cart">
-                    <el-link type="primary">我的购物车</el-link>
+                <router-link to="/cart" style="margin-right: 30px;">
+                    <el-badge :value="cartTotal" :hidden="!cartTotal">
+                        <el-link>我的购物车</el-link>
+                    </el-badge>
                 </router-link>
                 <el-dropdown>
                     <span class="el-dropdown-link">
@@ -33,11 +35,11 @@ import {mapState} from 'vuex'
 export default {
     name: 'Header',
     computed: {
-        ...mapState(['username'])
+        ...mapState(['username', 'cartTotal'])
     },
     methods: {
         logout() {
-            this.$store.commit('setUsername', '')
+            this.$store.commit('logOut')
             localStorage.removeItem('token')
             this.$router.push('/')
         }
@@ -68,5 +70,9 @@ export default {
     .username {
         padding-right: 30px;
         cursor: default;
+    }
+    /deep/ .el-badge__content.is-fixed {
+        top: 18px;
+        right: 3px;
     }
 </style>
