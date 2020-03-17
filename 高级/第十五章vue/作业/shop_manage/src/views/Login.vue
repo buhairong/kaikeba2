@@ -66,9 +66,23 @@
                             } else {
                                 localStorage.setItem('token', data.token)
                                 this.$store.commit('setUsername', username)
+                                this.getCartTotal(username)
                                 this.$router.push('/')
                             }
                         })
+                    }
+                })
+            },
+            getCartTotal(username) {
+                this.axios({
+                    method: 'get',
+                    url: '/api/getUserCartNum',
+                    params: {
+                        username
+                    }
+                }).then(res => {
+                    if(!res.data.code) {
+                        this.$store.commit('initCartTotal', res.data.total)
                     }
                 })
             }

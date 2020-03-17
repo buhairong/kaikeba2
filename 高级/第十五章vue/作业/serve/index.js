@@ -116,13 +116,11 @@ router.get('/getUserCart', koaJwt({secret: 'mytoken'}), ctx => {
     const {username} = ctx.request.query
     let result = {}
     if(cart[username]) {
-        console.log(1)
         result = {
             code: 0,
             userCart: cart[username]
         }
     } else {
-        console.log(2)
         result = {
             code: 0,
             userCart: []
@@ -165,14 +163,50 @@ router.post('/addCart', koaJwt({secret: 'mytoken'}), ctx => {
         ]
     }
 
+    console.log(cart)
+
     ctx.body = {
         code: 0,
         msg: '添加成功'
     }
 })
 
-router.post('/changeCart', koaJwt({secret: 'mytoken'}), ctx => {
+router.post('/addCartNum', koaJwt({secret: 'mytoken'}), ctx => {
+    const {username, good} = ctx.request.body
 
+    cart[username].map(item => {
+        if(item.goodId === good.goodId) {
+            item.number += 1
+        }
+        return item
+    })
+
+    ctx.body = {
+        code: 0,
+        msg: '添加成功',
+        userCart: cart[username]
+    }
+})
+
+router.post('/minusCartNum', koaJwt({secret: 'mytoken'}), ctx => {
+    const {username, good} = ctx.request.body
+
+    cart[username].map(item => {
+        if(item.cartId === good.cartId) {
+            if(item.number > 0) {
+                item.number -= 1
+            }
+        }
+        return item
+    })
+
+    cart[username] = cart[username].filter(item => item.number > 0)
+
+    ctx.body = {
+        code: 0,
+        msg: '删减成功',
+        userCart: cart[username]
+    }
 })
 
 app.use(router.routes())

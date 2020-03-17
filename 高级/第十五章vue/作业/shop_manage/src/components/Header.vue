@@ -25,7 +25,10 @@
                 </router-link>
             </div>
         </div>
-        <div class="title">商品管理系统</div>
+        <div class="title">
+            <slot></slot>
+            商品管理系统
+        </div>
     </div>
 </template>
 
@@ -74,5 +77,9 @@ export default {
     /deep/ .el-badge__content.is-fixed {
         top: 18px;
         right: 3px;
+    }
+    .router-link-active {
+        float: left;
+        margin-left: 30px;
     }
 </style>

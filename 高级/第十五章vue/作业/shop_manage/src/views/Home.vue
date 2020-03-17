@@ -94,12 +94,6 @@ export default {
     watch: {
         sort() {
             this.getItems()
-        },
-        username(val) {
-            console.log(val)
-            if(val) {
-                this.getCartTotal()
-            }
         }
     },
     methods: {
@@ -134,19 +128,6 @@ export default {
         showDetail(index, row) {
             this.activeItem = row
             this.dialogVisible = true
-        },
-        getCartTotal() {
-            this.axios({
-                method: 'get',
-                url: '/api/getUserCartNum',
-                params: {
-                    username: this.username
-                }
-            }).then(res => {
-                if(!res.data.code) {
-                    this.$store.commit('initCartTotal', res.data.total)
-                }
-            })
         }
     }
 }
