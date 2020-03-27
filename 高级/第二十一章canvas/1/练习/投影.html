@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    // 设置画布宽高
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    // 画笔
+    const ctx = canvas.getContext('2d')
+
+    /*
+        投影
+            位置： shadowOffsetX  shadowOffsetY
+            模糊度：shadowBlur
+            颜色： shadowColor
+    */
+    ctx.beginPath()
+    ctx.arc(300, 200, 100, 0, Math.PI*2)
+    ctx.fillStyle="#93abff"
+    ctx.shadowColor="#000"
+    ctx.shadowOffsetX=30
+    ctx.shadowOffsetY=30
+    ctx.shadowBlur=30
+    ctx.fill()
+
+
+</script>ctx
