@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d')
+
+    // 色系
+    const [redA, redB, yellow] = ['#db655c', '#d63d46', '#9f8d7d']
+
+    // 一圈的弧度
+    const c = Math.PI*2
+
+    // canvas 宽高
+    const {width, height} = canvas
+
+    // 绘图
+    draw()
+
+    function draw() {
+        ctx.save()
+
+        // 整体偏移
+        ctx.translate(width/2, height/2)
+
+        // 整体旋转
+        ctx.rotate(-Math.PI/2)
+
+        // 钟表的表框
+        // 内框
+        ctx.save()
+        ctx.lineWidth = 20
+        ctx.strokeStyle = redA
+        ctx.beginPath()
+        ctx.arc(0, 0, 145, 0, c)
+        ctx.stroke()
+        ctx.restore()
+
+        // 外框
+        ctx.save()
+        ctx.lineWidth = 9
+        ctx.strokeStyle = redB
+        ctx.beginPath()
+        ctx.arc(0, 0, 155, 0, c)
+        ctx.stroke()
+        ctx.restore()
+
+        // 刻度
+        ctx.save()
+        ctx.lineWidth = 15
+        ctx.strokeStyle = redB
+        ctx.beginPath()
+        for(let i=0; i<4; i++) {
+            ctx.moveTo(90, 0)
+            ctx.lineTo(120, 0)
+            ctx.rotate(Math.PI/2)
+            ctx.stroke()
+        }
+        ctx.restore()
+
+        ctx.restore()
+    }
+
+
+</script>
