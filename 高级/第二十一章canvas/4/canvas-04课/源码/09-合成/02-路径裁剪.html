@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>合成</title>
+    <style>
+        body{margin: 0;overflow: hidden}
+        #canvas{
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas=document.getElementById('canvas');
+    //canvas充满窗口
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    //画笔
+    const  ctx=canvas.getContext('2d');
+
+    /*路径裁剪的步骤：
+    * 1.定义路径
+    * 2.ctx.clip()
+    */
+    ctx.save();
+    ctx.font='100px arial';
+    // ctx.strokeText('罩顾自己',100,300);
+    ctx.beginPath();
+    ctx.arc(300,300,200,0,Math.PI*2);
+    ctx.stroke();
+    ctx.clip();
+    ctx.fillRect(0,300,600,300);
+    ctx.restore();
+    ctx.fillRect(0,500,600,300);
+
+</script>
+</body>
+</html>
