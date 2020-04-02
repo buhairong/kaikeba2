@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas透明度</title>
+    <style>
+        body{margin: 0;overflow: hidden}
+        #canvas{
+            /*width: 50%;*/
+            /*height: 50%;*/
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas=document.getElementById('canvas');
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    const ctx=canvas.getContext('2d');
+
+    /*正常绘制的直线*/
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(50,50);
+    ctx.lineTo(400,50);
+    ctx.stroke();
+    ctx.restore();
+
+    /*将坐标系偏移0.5后绘制的直线*/
+    ctx.save();
+    ctx.translate(0.5,0.5);
+    ctx.beginPath();
+    ctx.moveTo(50,100);
+    ctx.lineTo(400,100);
+    ctx.stroke();
+    ctx.restore();
+</script>
+</body>
+</html>
+
