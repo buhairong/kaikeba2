@@ -15,9 +15,21 @@
             width: 100%;
             height: 100%;
         }
+        #selWrap {
+            margin: 20px;
+        }
     </style>
 </head>
 <body>
+<div id="selWrap">
+    请选择拼图难度：<select id="sel">
+        <option value="4">超简单</option>
+        <option value="6">简单</option>
+        <option value="9">中级</option>
+        <option value="12">高级</option>
+        <option value="16">地狱</option>
+    </select>
+</div>
 <div id="wrap"></div>
 </body>
 </html>
@@ -25,9 +37,17 @@
     import Jigsaw from './jigsaw.js'
 
     const wrap = document.getElementById('wrap')
+    const sel = document.getElementById('sel')
     const option = {
-        imgSrc: './original.jpg',
-        size: 4
+        originalSrc: './original.jpg',
+        chaosSrc: './chaos.jpg',
+        size: sel.value
     }
     const jigsaw = new Jigsaw(wrap, option)
+
+    sel.addEventListener('change', function(e) {
+        jigsaw.size = e.target.value
+        jigsaw.fragmentArr = []
+        jigsaw.render()
+    })
 </script>
