@@ -24,6 +24,12 @@ export default class Jigsaw {
         // 鼠标位置减去碎片位置
         this.subObj = {}
 
+        // 原图碎片坐标点（记录左上角x,y值，用于吸附）
+        this.originalImgArr = []
+
+        // 拼图碎片坐标点
+        this.chaosImgArr = []
+
         this.mousedownFn = this.mousedownFn.bind(this)
         this.mousemoveFn = this.mousemoveFn.bind(this)
         this.mouseupFn = this.mouseupFn.bind(this)
@@ -41,11 +47,13 @@ export default class Jigsaw {
 
         // 绘制拼图
         this.chaosImg = new Image()
-        this.chaosImg.src = option.chaosSrc
+        this.chaosImg.src = option.originalSrc
         this.chaosImg.onload = () => {
             // 绘图
             this.drawChaosImg()
         }
+
+
     }
 
     // 创建 canvas 节点
@@ -58,6 +66,54 @@ export default class Jigsaw {
         this.el.appendChild(canvasWrap)
         this.ctx = this.canvas.getContext('2d')
         this.listen()
+    }
+
+    /*
+        计算原图碎片坐标点（记录左上角x,y值，用于吸附）
+        计算拼图碎片坐标点，并打乱随机排序
+    */
+    computerImageArea() {
+        const {originalImg} = this
+        const {width, height} = originalImg
+
+        // 计算拼图横排与竖排数量
+        const col = Math.floor(Math.sqrt(this.size))
+        const row = this.size / col
+
+        // 计算碎片的宽高
+        const fragmentW = width/row
+        const fragmentH = height/col
+
+        // 拼图碎片放置起始位置
+        const startX = this.imgX + width + 100
+        const startY = this.imgY
+
+        const tempArr = []
+
+        for(let x=0; x<row; x++) {
+            for(let y=0; y<col; y++) {
+                // 存储原图碎片放置区域左上角坐标点
+                this.originalImgArr.push({
+                    originalImgX: this.imgX + x*fragmentW,
+                    originalImgY: this.imgY + y*fragmentH,
+                })
+
+                // 计算拼图放置位置
+                tempArr.push({
+                    chaosImgX: startX + x*(fragmentW+20),
+                    chaosImgY: startY + y*(fragmentH+20),
+                })
+            }
+        }
+
+        // 将拼图放置位置数组随机排序
+        let len = this.size
+        while(this.chaosImgArr.length < this.size) {
+            const randomNum = Math.floor(Math.random()*len)
+            const item = tempArr.splice(randomNum, 1)
+            this.chaosImgArr.push(item)
+            len--
+        }
     }
 
     // 绘制原图并置灰
@@ -86,6 +142,12 @@ export default class Jigsaw {
         }
 
         this.ctx.putImageData(imgDt, this.imgX, this.imgY)
+
+        /*
+            计算原图碎片坐标点（记录左上角x,y值，用于吸附）
+            计算拼图碎片坐标点，并打乱随机排序
+        */
+        this.computerImageArea()
     }
 
     // 绘制拼图

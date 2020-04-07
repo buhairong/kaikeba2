@@ -28,6 +28,7 @@
         <option value="9">中级</option>
         <option value="12">高级</option>
         <option value="16">地狱</option>
+        <option value="64">乐乐级难度</option>
     </select>
 </div>
 <div id="wrap"></div>
@@ -40,7 +41,6 @@
     const sel = document.getElementById('sel')
     const option = {
         originalSrc: './original.jpg',
-        chaosSrc: './chaos.jpg',
         size: sel.value
     }
     const jigsaw = new Jigsaw(wrap, option)
@@ -48,6 +48,8 @@
     sel.addEventListener('change', function(e) {
         jigsaw.size = e.target.value
         jigsaw.fragmentArr = []
+        jigsaw.originalImgArr = []
+        jigsaw.chaosImgArr = []
         jigsaw.render()
     })
 </script>
