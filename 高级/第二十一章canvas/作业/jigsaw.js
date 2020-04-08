@@ -4,8 +4,8 @@ export default class Jigsaw {
         this.size = option.size || 4 // 拼图分成几块
 
         // 绘制开始坐标
-        this.imgX = 100
-        this.imgY = 100
+        this.imgX = 50
+        this.imgY = 50
 
         // 碎片对象存放数组
         this.fragmentArr = []
@@ -100,8 +100,8 @@ export default class Jigsaw {
 
                 // 计算拼图放置位置
                 tempArr.push({
-                    chaosImgX: startX + x*(fragmentW+20),
-                    chaosImgY: startY + y*(fragmentH+20),
+                    chaosImgX: startX + x*(fragmentW+10),
+                    chaosImgY: startY + y*(fragmentH+10)
                 })
             }
         }
@@ -111,7 +111,10 @@ export default class Jigsaw {
         while(this.chaosImgArr.length < this.size) {
             const randomNum = Math.floor(Math.random()*len)
             const item = tempArr.splice(randomNum, 1)
-            this.chaosImgArr.push(item)
+            this.chaosImgArr.push({
+                chaosImgX: item[0].chaosImgX,
+                chaosImgY: item[0].chaosImgY
+            })
             len--
         }
     }
@@ -186,6 +189,7 @@ export default class Jigsaw {
                 newFragment.drawImageFragment()
             })
         }else {
+            let index=0
             for(let x=0; x<row; x++) {
                 for(let y=0; y<col; y++) {
                     const fragment = new Fragment(
@@ -198,13 +202,14 @@ export default class Jigsaw {
                         fragmentW,
                         fragmentH,
                         // 碎片位置
-                        startX + ((fragmentW+10)*x),
-                        startY + ((fragmentH+10)*y),
+                        this.chaosImgArr[index]['chaosImgX'],
+                        this.chaosImgArr[index]['chaosImgY'],
                         fragmentW,
                         fragmentH
                     )
 
                     this.fragmentArr.push(fragment)
+                    index++
                 }
             }
         }
@@ -238,6 +243,23 @@ export default class Jigsaw {
     }
 
     mouseupFn(e) {
+        if(this.draw) {
+            /*
+                判断当前移动的碎片左上角坐标点距离原图放置区域的左上角坐标点,
+                x,y坐标都小于10px时，自动吸附过去
+            */
+            const {originalImgArr} = this
+            const {fragmentX,fragmentY} = this.fragmentArr[this.curFragment]
+            for(let i=0; i<originalImgArr.length; i++) {
+                const {originalImgX, originalImgY} = originalImgArr[i]
+                if(Math.abs(fragmentX - originalImgX) < 10 && Math.abs(fragmentY - originalImgY) < 10) {
+                    this.fragmentArr[this.curFragment].fragmentX = originalImgX
+                    this.fragmentArr[this.curFragment].fragmentY = originalImgY
+                    break
+                }
+            }
+            this.render()
+        }
         this.draw = false
         this.curFragment = null
     }
