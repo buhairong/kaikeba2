@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>柱状图项目加纹理</title>
+    <style>
+        #main{
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<!--建立dom 容器-->
+<div id="main"></div>
+<!--引入echarts-->
+<script src="./echarts.min.js"></script>
+<script>
+    /*基于准备好的dom，初始化echarts实例
+    * echarts.init(dom)
+    * */
+    const myChart=echarts.init(document.getElementById('main'));
+
+    const img=new Image();
+    img.src='./s.png';
+    img.onload=function(){
+        /*指定图表的option 配置项和数据
+    * title 标题 {}
+    *   text 主标题
+    * xAxis x轴 {}
+    *   data 类目数据
+    * yAxis y轴 {}
+    * series 系列列表 [系列，...]
+    *   系列
+    *       type 图表类型
+    *       data 数据，与xAxis.data 相对应
+    * */
+        const option={
+            title:{
+                text:'主标题'
+            },
+            xAxis: {
+                data:['html','css','js']
+            },
+            yAxis: {},
+            series:{
+                type:'bar',
+                data:[30,20,40],
+                itemStyle:{
+                    color:{
+                        image: img,
+                        repeat: 'repeat'
+                    }
+
+                }
+            }
+        };
+
+        /*使用刚指定的配置项和数据显示图表
+        * setOption(option)
+        * */
+        myChart.setOption(option);
+    }
+
+
+</script>
+</body>
+</html>
