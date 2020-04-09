@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件</title>
+    <style>
+        #main{
+            margin: 20px;
+            width: 700px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<!--建立dom 容器-->
+<div id="main"></div>
+<!--引入echarts-->
+<script src="../js/echarts.min.js"></script>
+<script>
+    // 基于准备好的dom，初始化echarts实例
+    const myChart = echarts.init(document.getElementById('main'));
+
+    // 指定图表的配置项和数据
+    const option = {
+        title: {
+            text: '饼图程序调用高亮示例',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+        },
+        series: {
+            name: '访问来源',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: [
+                {value: 335, name: '直接访问'},
+                {value: 310, name: '邮件营销'},
+                {value: 234, name: '联盟广告'},
+                {value: 135, name: '视频广告'},
+                {value: 1548, name: '搜索引擎'}
+            ],
+            /*鼠标划上的状态*/
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 10,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+    /*当前索引*/
+    let ind=0;
+
+    /*获取系列数据的长度*/
+    let len =5;
+
+    /*使用dispatchAction 方法高亮并提示一个扇形
+    *   type 触发的行为类型
+    *       highlight 高亮
+    *       showTip 显示提示
+    *       downplay 取消高亮
+    *       hideTip 取消提示
+    *   seriesIndex 系列索引，用于寻找系列列表中的某个系列
+    *   dataIndex 数据所有，用于寻找系列中的某个元素
+    * */
+    myChart.dispatchAction({
+        type:'highlight',
+        seriesIndex:0,
+        dataIndex:ind
+    });
+    myChart.dispatchAction({
+        type:'showTip',
+        seriesIndex:0,
+        dataIndex:ind
+    });
+
+
+
+
+
+    /*建立时间监听器*/
+    setInterval(function(){
+        myChart.dispatchAction({
+            type:'hideTip',
+            seriesIndex:0,
+            dataIndex:ind
+        });
+        myChart.dispatchAction({
+            type:'downplay',
+            seriesIndex:0,
+            dataIndex:ind
+        });
+
+        ind++;
+        if(ind===len){ind=0}
+        myChart.dispatchAction({
+            type:'highlight',
+            seriesIndex:0,
+            dataIndex:ind
+        });
+        myChart.dispatchAction({
+            type:'showTip',
+            seriesIndex:0,
+            dataIndex:ind
+        });
+
+    },1000)
+
+
+</script>
+</body>
+</html>
