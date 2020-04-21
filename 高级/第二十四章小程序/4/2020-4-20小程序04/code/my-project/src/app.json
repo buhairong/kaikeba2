@@ -1,0 +1,19 @@
+{
+    "pages": [
+        "pages/home/main",
+        "pages/personal/main",
+        "pages/city/main",
+        "pages/detail/main"
+    ],
+    "permission": {
+        "scope.userLocation": {
+            "desc": "你的位置信息将用于小程序位置接口的效果展示"
+        }
+    },
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#181818",
+        "navigationBarTitleText": "一个点评",
+        "navigationBarTextStyle": "white"
+    }
+}
