@@ -161,4 +161,306 @@
         /*显示图表*/
         chart.setOption(option)
     }
+
+    /*chartL3 - 散点图*/
+    {
+        /*实例化echarts*/
+        const chart = echarts.init(document.getElementById('chartL3'),'walden')
+
+        /*维度*/
+        const dimensions=['收入','年龄','人口','住址','时间']
+
+        fetch('./lib/table.json')
+            .then((res) => res.json())
+            .then(data => {
+                draw(data);
+            });
+
+        function draw(source) {
+            const option = {
+                /*
+                * title 标题
+                *   text 主标题，如'西虹市人民收入和年龄关系'
+                *   left 左对齐方式
+                * */
+                title:{
+                    text:'西虹市人民收入和年龄关系',
+                    left:'center'
+                },
+
+                /*
+                * tooltip 提示
+                * */
+                tooltip:{},
+
+                /*
+                * 坐标轴
+                *   type 坐标轴类型
+                *       value  数值轴，适用于连续数据
+                *   name 坐标轴名称
+                *   axisLabel 坐标轴刻度标签的相关设置
+                *       rotate 刻度标签旋转的角度
+                * */
+                xAxis:{
+                    type: 'value',
+                    name: '年龄'
+                },
+                yAxis:{
+                    type: 'value',
+                    name: '收入'
+                },
+                /*
+                * dataset 数据集
+                *   dimensions 维度映射 []
+                *       string，如 '年龄'，等同于 {name: '年龄'}
+                *   source 数据源
+                * */
+                dataset:{
+                    dimensions,
+                    source
+                },
+
+                /*
+                * series系列集合
+                *   type 图表类型
+                *       scatter 散点图
+                *   symbolSize 散点大小
+                *   encode 编码映射
+                *       x  x坐标系的维度映射，如1|'年龄'
+                *       y  y坐标系的维度映射，如0|'收入'
+                *       tooltip 提示映射，如[0, 1]
+                *   itemStyle 项目样式
+                *       opacity 项目透明度
+                * */
+                series:{
+                    type: 'scatter',
+                    symbolSize: 4,
+                    encode: {
+                        x: '年龄',
+                        y: '收入',
+                        tooltip: [0, 1]
+                    },
+                    itemStyle: {
+                        opacity: 0.3
+                    }
+                }
+
+            };
+            // 使用刚指定的配置项和数据显示图表。
+            chart.setOption(option);
+        }
+    }
+
+    /*chartR1 - 雷达图*/
+    {
+        /*数据*/
+        const data=[
+            {
+                name : '预算分配',
+                value : [43000, 45000, 42000, 45000, 40000, 49000],
+            },
+            {
+                name : '实际开销',
+                value : [30000, 34000, 55000, 35000, 32000, 31000],
+            }
+        ];
+        const m1=Math.max(...data[0].value);
+        const m2=Math.max(...data[1].value);
+        const m3=Math.max(m1,m2);
+
+        /*
+        * 雷达坐标系组件 radar
+        *   indicator 雷达图的指示器集合 []
+        *       name 指示器名称, 也就是标签内容
+        *       min、max 数据区间，实际数据会在此区间内计算比值
+        *       color 标签颜色
+        *   shape 雷达形状
+        *       polygon 多边形，默认
+        *       circle 圆形
+        *
+        * */
+        const indicator=[
+            { name: '销售',max:m3},
+            { name: '管理',max:m3},
+            { name: '信息技术',max:m3},
+            { name: '客服',max:m3},
+            { name: '研发',max:m3},
+            { name: '市场',max:m3}
+        ];
+
+        /*实例化echarts*/
+        const chart = echarts.init(document.getElementById('chartR1'),'walden');
+
+        /*配置项*/
+        const option = {
+            /*
+            * title 标题
+            *   text 主标题，如'西虹市财务开销'
+            * */
+            title:{
+                text:'西虹市财务开销',
+            },
+
+            /*
+            * tooltip 提示
+            * */
+            tooltip:{},
+
+
+            /*legend 图例
+            *   data 数据，如['预算分配', '实际开销']
+            *   orient 排列方式
+            *       vertical 竖排
+            *       horizontal 横排，默认
+            *   left 左边距，如0
+            *   top 上边距，如32
+            * */
+            legend:{
+                data:['预算分配', '实际开销'],
+                left: 0,
+                top: 32,
+                orient: 'vertical'
+            },
+
+
+            /*
+            * 雷达坐标系组件 radar
+            *   indicator[] 雷达图的指示器，定义雷达的轴
+            * */
+            radar: {indicator},
+
+            /*
+            * series系列集合
+            *   type 图表类型
+            *       radar 雷达图
+            *   data 数据
+            * */
+            series:{
+                type: 'radar',
+                data
+            }
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        chart.setOption(option);
+    }
+
+    /*chartR2 - 柱状图*/
+    {
+        /*数据源*/
+        const source=[
+            ['时间','小麦','玉米','高粱'],
+            [2017,1000,800,900],
+            [2018,500,650,800],
+            [2019,800,900,1200],
+        ];
+
+        /*实例化echarts*/
+        const chart = echarts.init(document.getElementById('chartR2'),'walden');
+
+        /*图像源*/
+        //小麦
+        const imgXm=new Image();
+        imgXm.src='./images/xm.jpg';
+        //玉米
+        const imgYm=new Image();
+        imgYm.src='./images/ym.jpg';
+        //高粱
+        const imgGl=new Image();
+        imgGl.src='./images/gl.jpg';
+
+        //当所有图片都加载成功后再绘图
+        Promise.all([imgPro(imgYm),imgPro(imgXm),imgPro(imgGl)]).then(()=>{
+            //绘图方法
+            draw();
+        });
+        //建立Promise 对象，指定img 加载成功后，执行resolve
+        function imgPro(img){
+            return new Promise((resolve)=>{
+                img.onload=function(){
+                    resolve(img);
+                }
+            });
+        }
+
+        function draw() {
+            /*配置项*/
+            const option = {
+                /*
+                * title 标题
+                *   text 主标题，如'西虹市农作物收成'
+                * */
+                title:{
+                    text:'西虹市农作物收成',
+                    left:'center'
+                },
+                tooltip:{},
+                legend:{
+                    data:['小麦','玉米','高粱'],
+                    top:30
+                },
+                grid:{
+                    top:72,
+                    bottom:28
+                },
+
+                /*
+                * dataset 数据集
+                *   source 数据源
+                * */
+                dataset:{
+                    source
+                },
+
+
+                /*  xAxis
+                *       type
+                *           category 类目轴
+                *   yAxis
+                *       type
+                *           value 数值轴
+                */
+                xAxis:{
+                    type:'category'
+                },
+                yAxis:{
+                    type:'value'
+                },
+
+                /*
+                * series系列集合
+                *   type 图表类型
+                *       bar 柱状图
+                *   color 颜色
+                *       image 图像源
+                *       repeat 图像的重复方式，如repeat
+                * */
+                series:[
+                    {
+                        type: 'bar',
+                        color: {
+                            image: imgXm,
+                            repeat: 'repeat'
+                        }
+                    },
+                    {
+                        type: 'bar',
+                        color: {
+                            image: imgYm,
+                            repeat: 'repeat'
+                        }
+                    },
+                    {
+                        type: 'bar',
+                        color: {
+                            image: imgGl,
+                            repeat: 'repeat'
+                        }
+                    }
+                ]
+
+            };
+            // 使用刚指定的配置项和数据显示图表。
+            chart.setOption(option);
+        }
+    }
 </script>
