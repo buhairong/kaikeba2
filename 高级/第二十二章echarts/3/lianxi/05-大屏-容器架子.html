@@ -446,8 +446,8 @@
                         type: 'bar',
                         color: {
                             image: imgYm,
-                            repeat: 'repeat'
-                        }
+                        repeat: 'repeat'
+                    }
                     },
                     {
                         type: 'bar',
@@ -462,5 +462,27 @@
             // 使用刚指定的配置项和数据显示图表。
             chart.setOption(option);
         }
+    }
+
+    /*chartR3 - 百度地图*/
+    {
+        const chart = echarts.init(document.getElementById('chartR3'),'walden');
+
+        /*获取空气质量质量数据*/
+        fetch('./lib/pm.json')
+            .then((res) => res.json())
+            .then(data => {
+                draw(data)
+            })
+
+        function draw(data){
+            const option = {
+
+            }
+
+            chart.setOption(option, true)
+        }
+
+
     }
 </script>
