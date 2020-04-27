@@ -477,12 +477,173 @@
 
         function draw(data){
             const option = {
-
+                /*
+                * title 标题
+                *   text 主标题，如'西虹市在哪里'
+                *   left 左对齐方式
+                *   top 上边距，如12
+                * */
+                title:{
+                    text:'西虹市的空气质量',
+                    left:'center',
+                    top:12,
+                },
+                /*
+                * bmap 百度地图
+                *   center[经度,纬度] 地图中心点位，如[121.48, 31.22]
+                *   zoom 缩放级别，如6
+                *   roam 是否可以拖拽缩放
+                * */
+                bmap: {
+                    center: [121.48, 31.22],
+                    zoom: 6,
+                    roam: true
+                },
+                /*系列列表
+                *   type 系列类型
+                *       scatter 散点图
+                *       effectScatter 特效散点图
+                *   coordinateSystem 坐标类型，bmap
+                *   data 数据
+                *   symbolSize 尺寸
+                * */
+                series : [
+                    {
+                        type: 'scatter',
+                        coordinateSystem: 'bmap',
+                        data,
+                        symbolSize: function(param) {
+                            return param[2]/10
+                        }
+                    },
+                    {
+                        type: 'effectScatter',
+                        coordinateSystem: 'bmap',
+                        data:data.slice(data.length-6, data.length-1),
+                        symbolSize: function(param) {
+                            return param[2]/15
+                        }
+                    }
+                ]
             }
 
             chart.setOption(option, true)
+
+            /*获取百度地图的实例 chart.getModel().getComponent('bmap').getBMap()*/
+            const map=chart.getModel().getComponent('bmap').getBMap();
+            map.setMapStyleV2({
+                styleId: '5453dc64d711215271444d4abeaf6b44'
+            })
         }
 
 
+    }
+
+    /*chartC - echarts地图*/
+    {
+        const chart = echarts.init(document.getElementById('chartC'),'walden');
+
+        fetch('./lib/income.json')
+            .then((res) => res.json())
+            .then(data => {
+                draw(data)
+            });
+
+        function draw(data){
+            /*配置项*/
+            const option = {
+                /*
+                * title 标题
+                *   text 主标题，如'西虹市不同地区的平均收入'
+                *   textStyle 主题样式
+                *   left 左对齐方式
+                *   top 上边距，如12
+                * */
+                title:{
+                    text:'西虹市不同地区的平均收入',
+                    textStyle:{
+                        fontSize:24
+                    },
+                    left:'center',
+                    top:32,
+                },
+                tooltip:{},
+                /*
+                *地理坐标系组件 geo
+                *   map 地图名称，如'china'
+                *   roam 是否开启鼠标缩放和平移漫游
+                *       scale 缩放
+                *       move 平移
+                *       true 都开启
+                *   zoom 缩放比例，如1
+                *   top、left、right 边界，如120、14、14
+                *   itemStyle 地图区样式
+                *       areaColor 地图区域的颜色，如 rgba(0,29,132,0.8)
+                *       borderColor 图形的描边颜色，如 #02c0ff
+                *   emphasis 高亮状态下的多边形和标签样式
+                *       itemStyle {}
+                *       label {}
+                *
+                * */
+                geo: {
+                    map: 'china',
+                    roam: true,
+                    zoom: 1,
+                    top: 120,
+                    left: 14,
+                    right: 14,
+                    itemStyle: {
+                        areaColor: 'rgba(0,29,132,0.8)',
+                        borderColor: '#02c0ff'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowColor: 'rgab(0,0,0,1)',
+                            shadowOffsetY: 4,
+                            shadowBlur: 4
+                        },
+                        label: {
+                            color: '#fff'
+                        }
+                    }
+                },
+
+                /*
+                * series系列集合
+                *   name 名称，如'旅游人数'
+                *   type 图表类型
+                *       scatter 散点图
+                *   coordinateSystem 坐标类型，如'geo'
+                *   data 数据
+                *   symbolSize 散点大小,可为函数(p)=>{return p[2]}
+                *   encode 编码映射
+                *       x  x坐标系的维度映射，如'收入'
+                *       y  y坐标系的维度映射，如'年龄'
+                *       tooltip 提示映射，如[0, 1, 2, 3, 4]
+                *   itemStyle 项目样式
+                *       color 项目颜色，如'rgba(255,255,255,0.6)'
+                *   emphasis 高亮状态
+                *       itemStyle 项目样式
+                *           color 颜色，如'yellow'
+                * */
+                series:[
+                    {
+                        type:'scatter',
+                        coordinateSystem:'geo',
+                        data,
+                        symbolSize:(param)=>{
+                            return param[2]/15
+                        },
+                        emphasis:{
+                            itemStyle:{
+                                color:'yellow'
+                            },
+                        }
+                    }
+                ]
+            }
+
+            chart.setOption(option);
+        }
     }
 </script>
