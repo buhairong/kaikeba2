@@ -22,3 +22,18 @@
 </div>
 </body>
 </html>
+<script>
+    setTimeout(()=>{
+        console.log('setTimeout1')
+    }, 1000)
+
+    new Promise((res, rej) => {
+        console.log('promise')
+        setTimeout(() => {
+            console.log('setTimeout2')
+            res(1)
+        }, 1500)
+    }).then(res => {
+        console.log('then')
+    })
+</script>
