@@ -1,0 +1,10 @@
+<view class="myContainer">
+	<text>测试内容</text>
+  <image src="/ico/home.png"></image>
+  <button size="mini" type="primary" open-type="contact" bindcontact="myfn">点击</button>
+  <button data-id="3" catchtap="fn">点击触发事件</button>
+  {{message}}
+  <view wx:if="{{judge}}">显示的内容</view>
+  <view hidden="{{judge}}">显示的内容1</view>
+  <button bindtap="getData">点击请求数据</button>
+</view>
