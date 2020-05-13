@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div id="app">
+        <my-component :n="1" style="color: red;" kkb="开课吧"></my-component>
+    </div>
+
+    <script src="./js/vue.js"></script>
+
+    <script>
+
+        const myComponent = {
+            inheritAttrs: false,
+            props: {
+                n: {
+                    validator(val) {
+                        return val >=0 && val <= 100;
+                    }
+                }
+            },
+            template: '<div kkb="k-k-b" style="background: green;">{{n + 10}}</div>'
+        };
+
+        let app = new Vue({
+            el: '#app',
+            components: {
+                myComponent: myComponent
+            }
+        });
+
+    </script>
+</body>
+</html>

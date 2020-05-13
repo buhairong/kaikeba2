@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <section id="wrap">
+      <h2 class="title">百度音乐榜单</h2>
+      <nav>
+         <a>只显示收藏内容</a> 
+         <a>只显示未收藏内容</a>  
+         <a class="active">全部榜单</a>
+      </nav>
+      <ul id="list">
+        <!-- <li>
+          <input type="checkbox" />
+          <span>第一条信息</span>
+          <a href="javascript:;" class="collect">收藏</a>
+          <a href="javascript:;" class="cancelCollect">取消收藏</a>
+          <a href="javascript:;" class="remove">删除</a>
+        </li> -->
+      </ul>
+      <footer class="footer">
+        <label><input type="checkbox" id="checkAll" />全选/全不选</label>
+        <a href="javascript:;" id="remove">删除</a>
+        <input type="text" id="newInfo" />
+        <a href="javascript:;" id="add">添加</a>
+      </footer>
+    </section>
+    <script>
+      {
+          let data = [
+              {
+                id: 0,
+                title: "残酷月光 - 费启鸣",
+                checked: true,
+                collect: true
+              },{
+                id: 1,
+                title: "兄弟 - 艾热",
+                checked: false,
+                collect: false
+              },{
+                id: 2,
+                title: "毕生 - 夏增祥",
+                checked: false,
+                collect: true
+              },{
+                id: 3,
+                title: "公子向北去 - 李春花",
+                checked: false,
+                collect: false
+              },{
+                id: 4,
+                title: "战场 - 沙漠五子",
+                checked: true,
+                collect: false //是否收藏 true 收藏 false 没有收藏
+              }
+          ];
+
+          let list = document.querySelector('#list')
+          let checkAllBtn = document.querySelector('#checkAll')
+          let removeBtn = document.querySelector('#remove')
+          let addBtn = document.querySelector('#add')
+          let inputBox = document.querySelector('#newInfo')
+          let filterBtn = document.querySelectorAll('nav a')
+          let filterIndex = 2 // 0: 显示收藏内容 1: 显示未收藏内容 2: 全部显示
+
+          let filterArr = [
+              item => item.collect === true, // 显示收藏内容
+              item => item.collect === false, // 显示未收藏内容
+              item => item // 全部显示
+          ]
+
+          // 改变全选状态
+          let checkAll = () => {
+              checkAllBtn.checked = data.filter(filterArr[filterIndex]).every(item => item.checked) && data.length
+          }
+
+          // 渲染视图
+          let render = () => {
+              let tempArr = data.filter(filterArr[filterIndex])
+              list.innerHTML = tempArr.map(item => `
+                <li>
+                  <input type="checkbox" ${item.checked ? "checked" : ""} onchange="changeCheck(${item.id})" />
+                  <span>${item.title}</span>
+                  <a href="javascript:;" class="collect" onclick="collectItem(${item.id})">${item.collect ? '取消收藏' : '收藏'}</a>
+                  <a href="javascript:;" class="remove" onclick="removeItem(${item.id})">删除</a>
+                </li>
+              `).join('')
+
+              checkAll()
+          }
+
+          // 添加
+          addBtn.onclick = function() {
+              const val = inputBox.value.trim()
+              if (!val) {
+                  alert('请输入音乐！')
+                  return false
+              }
+
+              let max = 0
+
+              if (data.length) {
+                  data.forEach(item => {
+                      if (item.id > max) {
+                          max = item.id
+                      }
+                  })
+              }
+
+              data.push({
+                  id: max + 1,
+                  title: val,
+                  checked: false,
+                  collect: false
+              })
+
+              render()
+          }
+
+          // 切换全选状态
+          checkAllBtn.onchange = function() {
+              data.filter(filterArr[filterIndex]).map(item => item.checked = this.checked)
+              render()
+          }
+
+          // 批量删除
+          removeBtn.onclick= function() {
+              data = data.filter(item => !item.checked)
+              render()
+          }
+
+          // 过滤
+          filterBtn.forEach((item, index) => {
+              item.onclick = function() {
+                  filterBtn.forEach(item => {
+                      item.classList.remove('active')
+                  })
+
+                  this.classList.add('active')
+
+                  filterIndex = index
+
+                  render()
+              }
+          })
+
+          // 收藏
+          function collectItem (id) {
+              data.map(item => {
+                  if (item.id === id) {
+                      item.collect = !item.collect
+                  }
+
+                  return item
+              })
+
+              render()
+          }
+
+          // 删除
+          function removeItem (id) {
+              const index = data.findIndex(item => item.id === id)
+              data.splice(index, 1)
+              render()
+          }
+
+          // 切换选中状态
+          function changeCheck (id) {
+              data.map(item => {
+                  if (item.id === id) {
+                      item.checked = !item.checked
+                  }
+
+                  return item
+              })
+
+              render()
+          }
+
+          render()
+      }
+    </script>
+  </body>
+</html>

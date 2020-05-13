@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    // 设置画布宽高
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    // 画笔
+    const ctx = canvas.getContext('2d')
+
+    /*
+        建立图像源
+        图像元素：<img>
+        视频元素：<video>
+        canvas：<canvas>
+    */
+    const floor = new Image()
+    floor.src = './images/floor.jpg'
+
+    const tile = new Image()
+    tile.src = './images/tile.jpg'
+
+    // 当所有图片加载成功后再绘图
+    Promise.all([loadImg(floor), loadImg(tile)]).then(() => {
+        // 绘图方法
+        draw()
+    })
+
+
+    // 建立promise对象
+    function loadImg(img) {
+        return new Promise(resolve => {
+            img.onload = function() {
+                resolve(img)
+            }
+        })
+    }
+
+    // 绘图
+    function draw() {
+        /*
+            建立纹理对象，定义重复方式
+            createPattern(image, "repeat | repeat-x | repeat-y | no-repeat")
+        */
+        const patf = ctx.createPattern(floor, 'repeat')
+        const patt = ctx.createPattern(tile, 'repeat')
+
+        // 为样式赋值
+        ctx.fillStyle = patf
+        ctx.strokeStyle = patt
+
+        // 描边宽度
+        ctx.lineWidth = 60
+
+        // 绘图
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.strokeRect(0, 0, canvas.width, canvas.height)
+    }
+
+
+
+
+</script>ctx

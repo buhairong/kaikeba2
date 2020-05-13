@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html,body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<script>
+    // 设置 body 为可放置元素
+    document.body.ondragover = function(e) {
+        e.preventDefault()
+    }
+
+    // 处理放置后的行为
+    document.body.ondrop = function(e) {
+        // 放置浏览器打开文件这个默认行为
+        e.preventDefault()
+        e.stopPropagation()
+        console.log(e.dataTransfer.files)
+        let file = e.dataTransfer.files[0]
+        let fr = new FileReader()
+        //fr.readAsText(file)        // 文本
+        //fr.readAsDataURL(file)     // 图片
+        fr.readAsArrayBuffer(file)  // 媒体
+        fr.onload = function() {
+            console.log(this.result)
+            let int8Array = new Int8Array(this.result)
+            console.log(int8Array)
+            int8Array.forEach(item => {
+                console.log(String.fromCharCode(item))
+            })
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d')
+
+    // 文字内容
+    const text = 'canvas'
+
+    // 文字位置
+    const [x, y] = [50, 200]
+
+    // 字体属性
+    ctx.font = 'bold 200px arial'
+
+    // 投影
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)'
+    ctx.shadowOffsetY = 2
+    ctx.shadowBlur = 4
+
+    // 填充颜色
+    ctx.fillStyle = '#a76921'
+    ctx.fillText(text, x, y)
+
+    // 文字描边
+    ctx.strokeStyle = '#f0d5ac'
+    ctx.lineWidth = 8
+    ctx.strokeText(text, x, y)
+
+    //虚线描边
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 1
+    ctx.setLineDash([5, 3])
+    ctx.strokeText(text, x, y)
+
+
+
+</script>

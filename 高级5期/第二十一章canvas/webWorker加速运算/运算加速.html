@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>运算加速</title>
+    <style>
+        body{margin: 0;overflow: hidden}
+        #canvas{background: antiquewhite;}
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script src="imgDtCal.js"></script>
+<script>
+    const canvas=document.getElementById('canvas');
+    //canvas充满窗口
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    const ctx=canvas.getContext('2d');
+
+    const img=new Image();
+    img.src='./images/forest.jpg';
+    img.onload=draw1;
+
+    //计时器
+    let time=null;
+
+    /*使用webwork*/
+    function draw1(){
+        //图像尺寸
+        const {width,height}=img;
+
+        /*1.在canvas 中绘制图像*/
+        ctx.drawImage(img,0,0);
+
+        /*2.从canvas 中获取图像的ImageData*/
+        const imgDt=ctx.getImageData(0,0,width,height);
+
+        /*建立worker 对象*/
+        const worker = new Worker("imgDtCal.js");
+
+        /*计时器*/
+        time=new Date();
+
+        /*数据传递*/
+        worker.postMessage(imgDt);
+
+        /*接收数据*/
+        worker.onmessage = function(event){
+            //时差
+            const diff=(new Date())-time;
+            console.log('使用 web worker：',diff);
+            /*3.在canvas 中显示ImageData*/
+            ctx.putImageData(event.data,0,0);
+        };
+    }
+
+    /*未使用webwork*/
+    function draw2(){
+        //图像尺寸
+        const {width,height}=img;
+
+        /*1.在canvas 中绘制图像*/
+        ctx.drawImage(img,0,0);
+
+        /*2.从canvas 中获取图像的ImageData*/
+        const imgDt=ctx.getImageData(0,0,width,height);
+        const data=imgDt.data;
+
+        //计时器
+        const time=new Date();
+
+        /*像素遍历*/
+        for(let i=0;i<data.length;i+=4){
+            let [r,g,b]=[
+                data[i],
+                data[i+1],
+                data[i+2]
+            ];
+            const lm =0.299*r+0.587*g+0.114*b ;
+            data[i]=lm;
+            data[i+1]=lm;
+            data[i+2]=lm;
+
+            //加大运算量
+            let num=0;
+            for(let i = 0; i<1000;i++){
+                num += i;
+            }
+        }
+
+        //时差
+        const diff=(new Date())-time;
+        console.log('未使用 web worker：',diff);
+
+        /*3.在canvas 中显示ImageData*/
+        ctx.putImageData(imgDt,0,0);
+    }
+
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #view {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 1200px;
+        }
+        #wrap,
+        #tz,
+        #box3d {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+        }
+        #box3d span {
+            position: absolute;
+            left: -512px;
+            top: -512px;
+            width: 1024px;
+            height: 1024px;
+            /* opacity: .5; */
+            font: 200px/1024px "宋体";
+            color: #fff;
+            text-align: center;
+            backface-visibility: hidden;
+            /* 和父级角度相差 超过 90 deg 的面 */
+        }
+        #box3d span:nth-child(1) {
+            background: #000;
+            transform: rotateY(0deg) translateZ(-512px);
+        }
+        #box3d span:nth-child(2) {
+            background: red;
+            transform: rotateY(90deg) translateZ(-512px);
+        }
+        #box3d span:nth-child(3) {
+            background: green;
+            transform: rotateY(180deg) translateZ(-512px);
+        }
+        #box3d span:nth-child(4) {
+            background: blue;
+            transform: rotateY(270deg) translateZ(-512px);
+        }
+        #box3d span:nth-child(5) {
+            background: #ccc;
+            transform: rotateX(-90deg) translateZ(-512px);
+        }
+        #box3d span:nth-child(6) {
+            background: yellow;
+            transform: rotateX(90deg) translateZ(-512px);
+        }
+        #tz {
+            transform: translateZ(-2000px);
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+        #box3d {
+            animation: 10s rotate linear infinite ;
+        }
+    </style>
+</head>
+<body>
+<div id="view">
+    <div id="wrap">
+        <div id="tz">
+            <div id="box3d">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+            </div>
+        </div>
+    </div>
+</div>    
+</body>
+</html>

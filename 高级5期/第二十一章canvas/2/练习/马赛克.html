@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight*2
+
+    const ctx = canvas.getContext('2d')
+
+    const img = new Image()
+    img.src = './images/wns.jpg'
+
+    img.onload = draw
+
+    // 色块尺寸
+    let size = 5
+
+    function draw() {
+        // 图像尺寸
+        const {width, height} = img
+
+        // 在canvas中绘制图像
+        ctx.drawImage(img, 0, 0)
+
+        // 从 canvas 中获取图像的ImageData
+        const imgDt = ctx.getImageData(0, 0, width, height)
+        const data = imgDt.data
+
+        // 行列遍历
+        for(let y=0; y<height; y+=size) {
+            for(let x=0; x<width; x+=size) {
+                const i= (y*width + x)*4
+                let [r, g, b, a] = [
+                    data[i],
+                    data[i+1],
+                    data[i+2],
+                    data[i+3],
+                ]
+                const color = `rgba(${r},${g},${b},${a})`
+
+                // 绘制色块
+                ctx.fillStyle = color
+                ctx.fillRect(x, y, size, size)
+            }
+        }
+
+    }
+
+
+</script>

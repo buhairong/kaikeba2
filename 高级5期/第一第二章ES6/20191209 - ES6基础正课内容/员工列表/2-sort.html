@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+let arr = [2,3,5,1,4];
+arr.sort((n1,n2)=>{
+    //return -1; //返回负值交换顺序
+    //console.log(n1,n2);
+    return n2-n1; // 保持顺序不变
+});
+// n2 - n1; 从大到小
+// n1 - n2; 从小到大
+console.log(arr);
+</script>    
+</body>
+</html>

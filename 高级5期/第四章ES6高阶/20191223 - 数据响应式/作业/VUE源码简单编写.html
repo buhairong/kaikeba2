@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="app">
+        {{message}}  {{modelData}} {{message}}
+        <div>
+            <p>姓名:{{ name }}，年龄: {{age}}</p>
+            <p v-html="htmlData"></p>
+            <input type="text" v-model="modelData" />
+            <p>{{modelData}}</p>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    /*
+        文档对象最顶层有EventTarget类(依据__proto__顺着原型链向上查找)
+        可以看到EventTarget里包含 addEventListener、 removeEventListener、 dispatchEvent
+        是不是很眼熟？就是我们平时用的事件监听
+    */
+    console.dir(document)
+    class Vue extends EventTarget {
+        constructor(option) {
+            super()
+            this.$option = option
+            /*
+                如果有设置el，查找el设置的dom
+                如果没有设置el,查找$mount设置的dom
+                如果el和$mount都设置了，$mount设置的会替换掉el所设置的dom
+                如果el和$mount都没有设置，设置为null
+            */
+            this.$el = option.el ? document.querySelector(option.el) : null
+
+            if (this.$el) {
+                this.init() // 如果el设置元素存在，进行初始化
+            }
+        }
+
+        // 初始化操作
+        init() {
+            // 对 v- 指令 {{}}模板等 进行编译
+            this.compileNode(this.$el)
+
+            // 给数据添加数据劫持
+            this.observe(this.$option.data)
+        }
+
+        // 给数据添加数据劫持  vue3
+        /*observe(data) {
+            let _this = this
+            this.$option.data = new Proxy(data, {
+                get(target, key) {
+                    return target[key]
+                },
+
+                set(target, key, newVal) {
+                    target[key] = newVal
+                    let event = new Event(key) // new Event(事件名称) // 新建一个事件对象
+                    _this.dispatchEvent(event) // 数据有更新时，触发视图更新
+                    return true
+                }
+            })
+        }*/
+
+        // 给数据添加数据劫持  vue3之前
+        observe(data) {
+            // 获取data数据里所有的键名
+            let keys = Object.keys(data)
+            keys.forEach(key => {
+                this.proxyData(data, key, data[key])
+            })
+        }
+
+        // 完成数据劫持，在数据修改时去触发视图更新
+        proxyData(data, key, value) {
+            let _this = this
+            Object.defineProperty(data, key, {
+                configurable: true,
+                enumerable: true,
+                set(newVal) {
+                    value = newVal
+                    let event = new Event(key) // new Event(事件名称) // 新建一个事件对象
+                    _this.dispatchEvent(event) // 数据有更新时，触发视图更新
+                },
+                get() {
+                    return value
+                }
+            })
+        }
+
+        // 获取实例通过$mount所设置的el查找dom
+        $mount(el) {
+            this.$el = el ? document.querySelector(el) : null
+            if (this.$el) {
+                this.init() // 如果$mount设置元素存在，进行初始化
+            }
+        }
+
+        compileNode(el) {
+            // 获取所有子节点
+            let childNodes = el.childNodes
+
+            // 遍历所有子节点
+            childNodes.forEach(node => {
+                // 如果节点类型为元素，且元素下面还有子节点，用递归向下遍历
+                if(node.nodeType === 1) {
+                    let attrs = node.attributes;
+                    [...attrs].forEach(attr => {
+                        let attrName = attr.name
+                        // 找出所有带有v-的指令
+                        if (attrName.indexOf('v-') === 0) {
+                            let attrValue = attr.value
+                            if (attrName === 'v-html') { // 解析v-html指令
+                                node.innerHTML = this.$option.data[attrValue]
+                                // 监听当v-html数据修改时，重新渲染页面
+                                this.addEventListener(attrValue, () => {
+                                    node.innerHTML = this.$option.data[attrValue]
+                                })
+                            } else if (attrName === 'v-model') { // 解析v-model指令
+                                node.value = this.$option.data[attrValue]
+                                // 实时监听表单输入内容，实时获取到表单输入的内容
+                                node.addEventListener('input', (e) => {
+                                    this.$option.data[attrValue] = e.target.value
+                                })
+                                // 监听当表单数据修改时，重新渲染页面
+                                this.addEventListener(attrValue, (e) => {
+                                    node.value = this.$option.data[attrValue]
+                                })
+                            }
+                        }
+                    })
+
+                    // 如果节点类型为元素，且元素下面还有子节点，用递归向下遍历
+                    if (node.childNodes.length > 0) {
+                        this.compileNode(node)
+                    }
+                } else if (node.nodeType === 3) { // 如果节点类型为文本，解析{{}}
+                    let reg = /\{\{\s*(\S+)\s*\}\}/g // 正则匹配出所有{{}}模板
+                    let context = node.textContent // 获取节点文本
+
+                    // 找到所有{{}}模板
+                    if (reg.test(node.textContent)) {
+                        /*
+                            解析{{}}模板，将键名替换成键值
+                            replace回调函数参数 ...args，返回四个参数：
+                            第一个是匹配到的字符串，
+                            第二个是正则小括号里的内容，
+                            第三个是匹配的字符串在原字符串中的索引，
+                            第四个是原字符串
+                        */
+                        node.textContent = context.replace(reg, (...args) => {
+                            this.addEventListener(args[1], (e) => {
+                                node.textContent = context.replace(reg, (...arg) => {
+                                    return this.$option.data[arg[1]];
+                                })
+                            })
+                            return this.$option.data[args[1]]
+                        })
+                    }
+                }
+            })
+        }
+    }
+
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            message: '圣诞节快乐！',
+            modelData: 'abc',
+            name: '沿着路走',
+            age: 0,
+            htmlData: '<div style="color: red;">圣诞快乐！</div>'
+        }
+    })
+
+    /*new Vue({
+        data: {
+            message: '圣诞节快乐！',
+            modelData: 'abc',
+            name: '沿着路走',
+            age: 0,
+            htmlData: '<div style="color: red;">圣诞快乐！</div>'
+        }
+    }).$mount('#app')*/
+
+    /*let vm = new Vue({
+        data: {
+            message: '圣诞节快乐！',
+            modelData: 'abc',
+            name: '沿着路走',
+            age: 0,
+            htmlData: '<div style="color: red;">圣诞快乐！</div>'
+        }
+    })*/
+
+    setTimeout(()=>{
+        vm.$option.data.htmlData = '<div style="color: deeppink;">元旦快乐！</div>'
+    },1000)
+
+    setInterval(()=>{
+        vm.$option.data.age++;
+    },1000);
+</script>

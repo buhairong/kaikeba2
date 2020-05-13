@@ -1,0 +1,8 @@
+<view>
+<button type="primary" bindtap="clickFn">点击</button>
+<button bindtap="changeVal">修改值</button>
+<button bindtap="goDad">点击触发父级事件</button>
+{{myvalue}}
+<slot></slot>
+<slot name="mySlot"></slot>
+</view>

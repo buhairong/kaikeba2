@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+
+    <input ref="input1" type="text" autofocus />
+    <button @click="setFocus">设置焦点</button>
+
+</div>
+
+<script src="./js/vue.js"></script>
+<script>
+
+    /**
+     * 组件
+     *  应用的组织结构
+     *
+     * 指令
+     *  用一种特殊标签属性来对当前渲染的组件（标签）进行功能扩展，影响当前标签的一些行为
+     *
+     * ref
+     *  属性，vue提供的一种用于获取标签（组件）实例对象的简便方式
+     */
+
+    // Vue.directive('');
+
+    let app = new Vue({
+        el: '#app',
+        methods: {
+            setFocus() {
+                // 如果去设置
+                // let input = document.querySelector('input');
+                // console.log(input);
+                // input.focus();
+
+                // console.log(this.$refs)
+
+                // this.$refs.input1.focus();
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>

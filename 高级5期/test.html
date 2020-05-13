@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            margin: 50px auto;
+            width: 300px;
+            height: 300px;
+            overflow: auto;
+            border: 1px solid #000;
+        }
+        #box1 {
+            height:1000px;
+        }
+    </style>
+</head>
+<body>
+<div id="box" dir="rtl">
+    <div id="box1" dir="ltr">sfdsa</div>
+</div>
+</body>
+</html>
+<script>
+    setTimeout(()=>{
+        console.log('setTimeout1')
+    }, 1000)
+
+    new Promise((res, rej) => {
+        console.log('promise')
+        setTimeout(() => {
+            console.log('setTimeout2')
+            res(1)
+        }, 1500)
+    }).then(res => {
+        console.log('then')
+    })
+
+
+    let str = "联通（中国）责任(有限)公司"
+    str = str.replace(/(\（|\）|\(|\))/g, '')
+    console.log(str)
+</script>

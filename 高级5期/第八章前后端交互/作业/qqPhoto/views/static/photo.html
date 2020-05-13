@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/photo.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <!-- 展示相关 -->
+    <div class="container">
+        <div class="photoHeader">
+            <div class="imgContainer">
+                <img class="photoName" src="img/1.jpg" />
+            </div>
+            <div class="btnContainer">
+                <span class="photoTitle">相册名称</span>
+                <button class="mybtn">上传照片</button>
+            </div>
+        </div>
+
+        <div class="photoContainer">
+            <div class="photoItem">
+                <img src="img/1.jpg" />
+                <span>
+                    home
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- 上传相关 -->
+    <div class="masking">
+        <div class="addPhotoContainer"></div>
+        <div class="addController">
+            <h3 class="addTitle">上传照片-普通上传(H5)<span class="close">╳</span></h3>
+            <div class="photoTitles">
+                <span class="uploadTo">上传到</span>
+                <div class="photoSelect">
+                    <img class="showPhoto" src="img/1.jpg" />
+                    相册名称
+                </div>
+            </div>
+
+            <!-- 上传按钮 -->
+            <div class="showContainer">
+                <div class="uploadContainer">
+                    <span class="fileinput-button">
+                        <span>上传图片</span>
+                        <input class="imgFile" type="file" name="" multiple="multiple" />
+                    </span>
+                    <span class="hint">
+                        按住Ctrl可多选
+                    </span>
+                </div>
+            </div>
+
+            <!-- 显示待上传图片  -->
+            <div class="loadContainer">
+                <div>传输速度：<span class="speed">0</span>/S</div>
+                <div class="wantUpload">
+                    <!-- <div class="uploadPhotoItem">
+                        <span class="myProgress">
+                            <span class="plan"></span>
+                            30%
+                        </span>
+                        <img src="img/1.jpg" />
+                        <span class="pictureName">
+                            home
+                        </span>
+                    </div> -->
+                </div>
+                <div class="addStyle">
+                    <span class="fileinput-add">
+                        <span></span>
+                        <input class="imgFile-add" type="file" multiple="multiple" />
+                    </span>
+                </div>
+                <!-- 开始上传按钮 -->
+                <div class="bottomStyle">
+                    <span class="uploadBtn">开始上传</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+<script>
+    axios.interceptors.request.use(function(config) {
+        const token = localStorage.getItem('token')
+        if(token) {
+            config.headers['Authorization'] = 'Bearer ' + token
+        }
+        return config
+    },function(err) {
+        console.log(err)
+    })
+    axios.withCredentials = true
+
+    test()
+    function test() {
+        axios.post('http://localhost:4000/test').then(res => {
+            console.log(res)
+        })
+
+    }
+    const username = location.search.substr(1).split('=')[1]
+    const mybtn = document.querySelector('.mybtn')
+    const close = document.querySelector('.close')
+    const masking = document.querySelector('.masking')
+    const uploadBtn = document.querySelector('.uploadBtn')
+    let uploadArr = []
+    let num = 0
+
+    mybtn.onclick = function() {
+        masking.style.display = 'block'
+    }
+
+    close.onclick = function() {
+        masking.style.display = 'none'
+    }
+
+    // 添加图片
+    document.querySelector('.imgFile').onchange = function() {
+        document.querySelector('.showContainer').style.display = 'none'
+        document.querySelector('.loadContainer').style.display = 'block'
+        ;[...this.files].forEach(file => {
+            let uploadObj = new UploadImg(file)
+            uploadArr.push(uploadObj)
+            uploadObj.createHtml()
+            console.log(uploadArr)
+        })
+    }
+
+    // 继续添加
+    document.querySelector('.imgFile-add').onchange = function() {
+        ;[...this.files].forEach(file => {
+            let uploadObj = new UploadImg(file)
+            uploadArr.push(uploadObj)
+            uploadObj.createHtml()
+            console.log(uploadArr)
+        })
+    }
+
+    // 上传
+    uploadBtn.onclick = function() {
+        async function upload(){
+            // 依次上传
+            for(let i=0; i<uploadArr.length; i++) {
+                await uploadArr[i].uploadFile()
+                num++
+            }
+            if(num >=uploadArr.length){
+                console.log('上传全部完成')
+                document.querySelector('.wantUpload').innerHTML = ''
+                document.querySelector('.showContainer').style.display = 'block'
+                document.querySelector('.loadContainer').style.display = 'none'
+                masking.style.display = 'none'
+            }
+        }
+        upload()
+    }
+
+    class UploadImg{
+        constructor(file) {
+            this.file = file
+            this.el = null
+        }
+
+        createHtml() {
+            // 文件转换成base64
+            let fileReader = new FileReader()
+            fileReader.readAsDataURL(this.file)
+            let _this = this
+            fileReader.onload = function() {
+                let uploadDiv = document.createElement('div')
+                uploadDiv.classList.add('uploadPhotoItem')
+                uploadDiv.innerHTML = `
+                    <span class="myProgress">
+                        <span class="plan"></span>
+                        <span class="exchange"> 0%</span>
+                    </span>
+                    <img src="${this.result}" />
+                    <span class="pictureName">
+                        ${_this.file.name}
+                    </span>
+                `
+                document.querySelector('.wantUpload').appendChild(uploadDiv)
+                _this.el = uploadDiv
+            }
+        }
+
+        uploadFile() {
+            return new Promise((resolve, reject) => {
+                let form = new FormData()
+                let stime;
+                let sloaded;
+                form.append('img', this.file)
+                let _this = this
+                axios({
+                    method: 'post',
+                    url: 'http://localhost:4000/upload',
+                    data: form,
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    onUploadProgress(evt){
+                        if(evt.lengthComputable){
+                            if(stime){
+                                let endTime = new Date().getTime()
+                                // 时间差
+                                let dtime = (endTime - stime) / 1000
+                                // 当前时间内上传的文件大小
+                                let dloaded = evt.loaded - sloaded
+                                let speed = dloaded/dtime
+                                let unit = 'b/s'
+
+                                sloaded = evt.loaded
+
+                                if(speed/1024 > 1) {
+                                    unit = 'kb/s'
+                                    speed = speed/1024
+                                }
+
+                                if(speed/1024 > 1) {
+                                    unit = 'mb/s'
+                                }
+                                if(!isNaN(speed)){
+                                    document.querySelector('.speed').innerHTML = speed.toFixed(2) + unit
+                                }
+                            }
+                            stime = new Date().getTime()
+
+                            _this.el.querySelector('.myProgress').style.display = 'block'
+                            let percent = Math.round(evt.loaded / evt.total * 100) + "%";
+                            _this.el.querySelector(".plan").style.width = percent;
+                            _this.el.querySelector(".exchange").innerHTML = percent;
+                            if(evt.loaded >= evt.total) {
+                                console.log('上传完成')
+                                resolve()
+                            }
+                        }
+                    }
+                }).then(res => {
+                    console.log(res)
+                })
+
+                /*let xhr = new XMLHttpRequest()
+                xhr.open('post', 'http://localhost:4000/upload', true)
+                let token = localStorage.getItem('token')
+                if(token){
+                    xhr.setRequestHeader('Authorization', 'Bearer '+token)
+                }
+
+                xhr.upload.onloadstart = function(){
+                    console.log('开始上传')
+                    stime = new Date().getTime()
+                    sloaded = 0
+                }
+
+                xhr.upload.onprogress = (evt) => {
+                    //console.log('文件已经上传大小：', evt.loaded)
+                    //console.log('文件总大小：', evt.total)
+                    let endTime = new Date().getTime()
+                    // 时间差
+                    let dtime = (endTime - stime) / 1000
+                    // 当前时间内上传的文件大小
+                    let dloaded = evt.loaded - sloaded
+                    let speed = dloaded/dtime
+                    let unit = 'b/s'
+                    stime = new Date().getTime()
+                    sloaded = evt.loaded
+
+                    if(speed/1024 > 1) {
+                        unit = 'kb/s'
+                        speed = speed/1024
+                    }
+
+                    if(speed/1024 > 1) {
+                        unit = 'mb/s'
+                    }
+
+                    document.querySelector('.speed').innerHTML = speed.toFixed(2) + unit
+
+
+                    this.el.querySelector('.myProgress').style.display = 'block'
+                    let percent = Math.round(evt.loaded / evt.total * 100) + "%";
+                    this.el.querySelector(".plan").style.width = percent;
+                    this.el.querySelector(".exchange").innerHTML = percent;
+                    if(evt.loaded >= evt.total) {
+                        console.log('上传完成')
+                        resolve()
+                    }
+                }
+                xhr.send(form)*/
+            })
+        }
+    }
+
+    // class Peron{
+    //     // 属于实力化对象的；
+    //     fn(){
+
+    //     }
+    //     // 静态方法 属于 类的
+    //     static foo(){
+
+    //     }
+    // }
+
+    // 练习： 1.实现文件转存和路径保存； 2.区分用户（每个用户有自己的图片，连接表查询）；
+
+
+</script>
+
+</html>

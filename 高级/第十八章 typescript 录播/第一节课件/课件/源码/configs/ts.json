@@ -1,8 +1,0 @@
-{
-    "compilerOptions": {
-        "outDir": "../dist",
-        "target": "es5",
-        "watch": true
-    },
-    "include": ["../src/**/*"]
-}

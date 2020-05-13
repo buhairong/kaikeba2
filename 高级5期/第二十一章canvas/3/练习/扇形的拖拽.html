@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文本</title>
+    <style>
+        body{margin: 0;overflow: hidden}
+        #canvas{background: antiquewhite;}
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas=document.getElementById('canvas')
+    const [width, height] = [window.innerWidth, window.innerHeight]
+    canvas.width=width
+    canvas.height=height
+    const ctx=canvas.getContext('2d')
+
+    // 圆形对象
+    class Ball {
+        constructor(r = 100, startAngel=0, endAngle=Math.PI*2, color='#000') {
+            this.r = r
+            this.startAngel = startAngel
+            this.endAngle = endAngle
+            this.color = color
+            this.x = 0
+            this.y = 0
+        }
+
+        draw(ctx) {
+            const {x, y, r, startAngel, endAngle, color}= this
+            ctx.save()
+            ctx.beginPath()
+            ctx.fillStyle=color
+            ctx.moveTo(x,y);
+            ctx.arc(x, y, r, startAngel, endAngle)
+            ctx.fill()
+            ctx.restore()
+        }
+    }
+
+    // 实例化矩形对象
+    const ball = new Ball(90)
+    ball.x = 200
+    ball.y = 200
+    ball.startAngel = 0
+    ball.endAngle = Math.PI/3
+
+    // 鼠标位置减图形位置
+    let subObj = null
+
+    // 鼠标是否在图形中
+    let drag = false
+
+    // 点击事件
+    canvas.addEventListener('mousedown', mousedownFn)
+
+    // 移动
+    canvas.addEventListener('mousemove', mousemoveFn)
+
+    // 抬起
+    canvas.addEventListener('mouseup', mouseupFn)
+
+    // 鼠标按下
+    function mousedownFn(event) {
+        // 鼠标位置
+        const mousePos = getMousePos(event)
+
+        // 鼠标位减图形位
+        subObj = {
+            x: mousePos.x - ball.x,
+            y: mousePos.y - ball.y
+        }
+
+        // 判读鼠标是否在图形中
+        drag = containPoint(ball, mousePos)
+        console.log(drag)
+    }
+
+    // 鼠标移动
+    function mousemoveFn(event) {
+        // 鼠标位置
+        const mousePos = getMousePos(event)
+
+        // 如果鼠标选择了图形，让图形跟着鼠标动，按需渲染
+        if(drag) {
+            ball.x = mousePos.x - subObj.x
+            ball.y = mousePos.y - subObj.y
+            render()
+        }
+    }
+
+    // 鼠标抬起
+    function mouseupFn(event) {
+        // 鼠标抬起，取消拖拽
+        drag = false
+    }
+
+    // 获取鼠标位置
+    function getMousePos(event) {
+        // 获取鼠标位置
+        const {clientX, clientY} = event
+
+        // 获取canvas边界位置
+        const {left, top} = canvas.getBoundingClientRect()
+
+        // 计算鼠标在canvas中的位置
+        const x = clientX - left
+        const y = clientY - top
+
+        return {x, y}
+    }
+
+    // 判断鼠标是否在图形中
+    function containPoint(obj, mousePos) {
+        const {r,startAngle,endAngle}=obj;
+
+        //获取鼠标到圆心的距离
+        const len=Math.sqrt(subObj.x*subObj.x+subObj.y*subObj.y);
+
+        //判断鼠标到圆心的距离是否小于半径
+        const b1=len<r;
+
+        //获取鼠标位减图形位的方向 dir
+        let dir=Math.atan2(subObj.y,subObj.x);
+        if(dir<0){dir+=Math.PI*2}
+
+        //判断鼠标向量的方向是否在扇形的夹角之间
+        let b2=dir>startAngle&&dir<endAngle;
+
+
+        return b1&&b2;
+    }
+
+    render()
+
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ball.draw(ctx)
+    }
+
+
+</script>
+</body>
+</html>

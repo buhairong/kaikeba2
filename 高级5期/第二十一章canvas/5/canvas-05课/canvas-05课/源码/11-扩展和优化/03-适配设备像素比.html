@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>适配设备像素比</title>
+    <style>
+        body{margin: 0;overflow: hidden}
+        #canvas{
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas=document.getElementById('canvas');
+    const  ctx=canvas.getContext('2d');
+    //视口宽高
+    const [width,height]=[window.innerWidth,window.innerHeight];
+
+    /*不做分辨率适配*/
+    /*{
+        canvas.width=width;
+        canvas.height=height;
+    }*/
+
+    /*适配设备分辨率*/
+
+    {
+        //获取设备像素比
+        const ratio=window.devicePixelRatio;
+
+        //将canvas 画布根据像素比放大
+        canvas.width=width*ratio;
+        canvas.height=height*ratio;
+        //canvas 坐标系也需要放大
+        ctx.scale(ratio,ratio);
+        //canvas 在浏览器中的大小是不能变的
+        canvas.style.width=width+'px';
+        canvas.style.height=height+'px';
+    }
+
+    //绘图
+    ctx.font='60px arial ';
+    ctx.fillText('canvas',50,100);
+
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div>
+    <a href="#view1/">视图1</a>
+    <a href="#view2">视图2</a>
+    <a href="#view3">视图3</a>
+</div>  
+<div id="view"></div>
+<script>
+    
+function getHash(){
+    console.log(window.location.hash);
+    view.innerHTML = window.location.hash;
+}
+getHash();
+window.addEventListener("hashchange",getHash);
+</script>  
+</body>
+</html>

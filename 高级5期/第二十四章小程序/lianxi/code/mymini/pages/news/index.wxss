@@ -1,0 +1,17 @@
+.newsItem {
+  display: flex;
+  margin-top: 150rpx;
+}
+
+image {
+  flex: 1;  
+  height: 120rpx;
+  margin-right: 20rpx;
+}
+
+.item {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

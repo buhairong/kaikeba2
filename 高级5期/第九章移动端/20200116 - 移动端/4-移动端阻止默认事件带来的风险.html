@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            background: red;
+            opacity: .5;
+        }
+    </style>
+</head>
+<body>
+<a href="http://www.baidu.com">百度</a>
+<br/>
+<input type="text" />
+<ul id="list"></ul>
+<script>
+{
+    let list = document.querySelector("#list");
+    list.innerHTML = [...(".".repeat(100))].map((item,index)=>{
+        return `<li>这是第${index}个li</li>`;
+    }).join("");
+}
+document.addEventListener("touchend",(e)=>{
+    e.preventDefault();
+},{passive:false});
+// 默认情况下 document html body touch 事件的 passive 为true
+// passive 控制该事件处理函数中，是否可以阻止默认事件 true 不能阻止默认事件，false 可以阻止默认事件
+/*
+    阻止touchstart的默认事件:
+        1. 所有的鼠标事件都会失效包括a标签的href
+        2. 不能进行双指缩放
+        3. 滚动条不能滑动
+        4. 输入框不能获得焦点
+        5. 内容不能再选中
+        6. 不能触发系统菜单
+    阻止touchmove的默认事件:
+        1. 不能进行双指缩放
+        2. 滚动条不能滑动  
+    阻止touchend的默认事件:
+        1. 所有的鼠标事件都会失效包括a标签的href
+        2. 输入框不能获得焦点
+        3. 内容不能再选中
+        4. 不能触发系统菜单     
+*/
+/*
+    如何在手机上测试我们的页面:
+        1. 手机和电脑连入同一个局域网
+        2. 在 PC 中，开启一个服务器
+        3. 用手机访问电脑中的服务器
+
+    anywhere --> node 的服务器
+    安装：npm i anywhere -g
+    启动：如果哪个目录我们需要对外访问，就在那个目录 命令行  anywhere
+*/
+</script>       
+</body>
+</html>

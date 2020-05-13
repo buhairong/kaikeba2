@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d')
+
+    // 图片尺寸：宽 高
+    const [width, height] = [400, 200]
+
+    /*
+        ImageData() 对象的建立
+        new ImageData(Uint8ClampedArray ,width, height)
+        new ImageData(width, height)
+    */
+//    const imgDt = new ImageData(width, height)
+//    console.log(imgDt)
+
+    /*
+        ImageData() 对象的建立
+        ctx.createImageData(width, height)
+        ctx.createImageData(ImageData)
+    */
+    const imgDt = ctx.createImageData(width, height)
+    console.log(imgDt)
+    imgDt.data.forEach((ele, ind) => {
+        imgDt.data[ind] = 255
+    })
+    ctx.putImageData(imgDt, 0, 0)
+
+    // 获取canvas中的像素, getImageData(x, y, width, height)
+    const canvasImgDt = ctx.getImageData(0, 0, 1, 1)
+    console.log(canvasImgDt)
+
+</script>

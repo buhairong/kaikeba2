@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>路径</title>
+    <style>
+        body{margin:0;overflow: hidden}
+        #canvas{background: antiquewhite;}
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas=document.getElementById('canvas');
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+
+    //画笔
+    const  ctx=canvas.getContext('2d');
+
+    //描边宽度
+
+    const [x,y,w,h]=[50,50,400,200];
+    const [x2,y2]=[x+w,y+h];
+    ctx.lineCap="square";
+    drawLine(x,y,x2,y,'red',10);
+    drawLine(x2,y,x2,y2,'yellow',20);
+    drawLine(x2,y2,x,y2,'green',30);
+    drawLine(x,y2,x,y,'blue',40);
+
+    function drawLine(x1,y1,x2,y2,color,w){
+        ctx.lineWidth=w;
+        ctx.beginPath();
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x2,y2);
+        ctx.strokeStyle=color;
+        ctx.stroke();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <title>刮刮乐</title>
+    <style>
+        body{margin: 0;overflow: hidden}
+        #canvas{
+            margin: 100px;
+            background-image: url("./images/ggl-back.png");
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas=document.getElementById('canvas');
+    const ctx=canvas.getContext('2d');
+
+    /*建立图像源*/
+    const img=new Image();
+    img.src='./images/ggl-mask.png';
+    img.onload=function(){
+        /*绘制遮罩层*/
+        const {width,height}=img;
+        canvas.width=width;
+        canvas.height=height;
+        ctx.drawImage(img,0,0);
+    };
+
+    /*
+    * 线对象 Line
+    *   ctx 上下文对象
+    *   drawing 是否正在绘图
+    *
+    *   鼠标按下 moveTo(x,y)
+    *       记录正在绘图的状态 drawing
+    *       保存状态
+    *       设置全局合成属性globalCompositeOperation 为destination-out
+    *       线宽lineWidth为120
+    *       拐角样式lineJion为圆角round
+    *       moveTo()设置路径起点
+    *   鼠标移动 lineTo(x,y)
+    *       lineTo()绘制下一个点
+    *       stroke()描边
+    *   鼠标抬起 restore()
+    *       状态还原
+    *       取消正在绘图的状态
+    * */
+    class Line{
+        constructor(ctx) {
+            this.ctx=ctx;
+            this.drawing=false;
+        }
+        moveTo(x,y){
+            this.drawing=true;
+            const {ctx}=this;
+            ctx.save();
+            ctx.lineWidth=30;
+            ctx.lineJoin='round';
+            ctx.globalCompositeOperation='destination-out';
+            ctx.beginPath();
+            ctx.moveTo(x,y);
+        }
+        lineTo(x,y){
+            const {ctx}=this;
+            ctx.lineTo(x,y);
+            ctx.stroke();
+        }
+        restore(){
+            const {ctx}=this;
+            ctx.restore();
+            this.drawing=false;
+        }
+    }
+
+
+    /*实例化线对象 Line*/
+    const line=new Line(ctx);
+
+
+    /*==========鼠标事件===========*/
+    /*鼠标按下*/
+    canvas.addEventListener('mousedown',function(event){
+        //鼠标左键按下
+        if(event.buttons===1) {
+            //获取鼠标位置
+            const {x, y} = getMousePos(canvas, event);
+            //绘制起点
+            line.moveTo(x,y);
+        }
+    });
+    /*鼠标移动*/
+    canvas.addEventListener('mousemove',function(event){
+        //鼠标左键按下且处于绘图状态
+        if(event.buttons===1) {
+            //获取鼠标位置
+            const {x, y} = getMousePos(canvas, event);
+            //绘制下一个点
+            line.lineTo(x,y);
+        }
+    });
+    /*鼠标抬起*/
+    canvas.addEventListener('mouseup',function(event){
+        //鼠标左键按下
+        if(event.buttons===1) {
+            //状态还原
+            line.restore();
+        }
+    });
+
+    /*=====触摸事件======*/
+    /*开始触摸*/
+    canvas.addEventListener('touchstart',function(event){
+        //获取触摸点
+        const {x,y}=getTouchPos(canvas,event);
+        //绘制起点
+
+    });
+
+    /*
+    * 手指移动
+    * passive：让浏览器提前知道要不要阻止默认事件
+    * https://www.cnblogs.com/ziyunfei/p/5545439.html
+    */
+    canvas.addEventListener('touchmove',function(event){
+        //阻止默认事件，避免页面在擦除时滑动
+        event.preventDefault();
+        //获取触摸点
+        const {x,y}=getTouchPos(canvas,event);
+        //绘制下一个点
+
+    },{passive:false});
+
+    /*结束触摸*/
+    canvas.addEventListener('touchend',function(){
+        //路径状态还原
+
+    });
+
+
+    //获取鼠标位置
+    function getMousePos(canvas,event){
+        return getPos(canvas,event.clientX,event.clientY);
+    }
+    //获取触摸点位置
+    function getTouchPos(canvas,event){
+        //获取鼠标位置
+        const {pageX,pageY}=event.changedTouches[0];
+        return getPos(canvas,pageX,pageY);
+    }
+    //基于鼠标或触摸点的位置，获取鼠标在canvas 中的像素位
+    function getPos(canvas,px,py){
+        const {clientWidth,clientHeight,width,height}=canvas;
+        //获取canvas 边界位置
+        const {top,left}=canvas.getBoundingClientRect();
+        //计算鼠标在canvas 中的位置
+        const [cssX,cssY]=[px-left,py-top];
+        const [percentX,percentY]=[cssX/clientWidth,cssY/clientHeight];
+        const [x,y]=[width*percentX,height*percentY];
+        return {x,y};
+    }
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>异步数据</title>
+    <style>
+        #main{
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<!--建立dom 容器-->
+<div id="main"></div>
+<!--引入echarts-->
+<script src="../js/echarts.min.js"></script>
+<script>
+    const myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption({
+        title: {
+            text: '中国地图',
+            left:'center'
+        }
+    });
+
+    /*显示loading - showLoading()*/
+    myChart.showLoading();
+
+    /*异步请求数据*/
+    fetch('../js/China.json')
+        .then((res) => res.json())
+        .then(data => {
+            echarts.registerMap('china', data);
+            myChart.setOption({
+                series: {
+                    type: 'map',
+                    map: 'china'
+                }
+            });
+
+            /*隐藏loading - hideLoading()*/
+            /*setTimeout(function(){
+                myChart.hideLoading();
+            },1000)*/
+
+
+        })
+
+</script>
+</body>
+</html>

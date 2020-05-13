@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination a {
+            padding: 5px 12px;
+            border: 1px solid #3ba9ff;
+            text-decoration: none;
+            margin: 5px;
+        }
+        .pagination a.active {
+            background: #3ba9ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+
+        <ul>
+            <li v-for="user of showUsers" :key="user.id">
+                {{user.name}}
+            </li>
+        </ul>
+
+        <k-pagination :pages="uPages" v-model="uPage"></k-pagination>
+
+
+    </div>
+
+    <script src="./js/vue.js"></script>
+    <script>
+
+        Vue.component('k-pagination', {
+            props: ['pages', 'page'],
+            // model 选项就是用来设定v-model绑定的规则的
+            // v-model 只能同时绑定一个prop
+            model: {
+                // prop 告诉v-model绑定的prop是哪个
+                prop: 'page',
+                // event 告诉v-model触发什么事件的时候，自动去修改v-model的绑定值
+                event: 'changepage'
+            },
+            template: `
+                <div class="pagination">
+                    <a href="" @click.prevent="prev">上一页</a>
+                    <a
+                        href=""
+                        v-for="p of pages"
+                        :class="{'active': p === page}"
+                        @click.prevent="gotoPage(p)"
+                    >
+                        {{p}}
+                    </a>
+                    <a href="">下一页</a>
+                </div>
+            `,
+            methods: {
+                gotoPage(p) {
+                    this.$emit('changepage', p);
+                },
+                prev() {
+                    this.$emit('changepage', this.page - 1);
+                }
+            }
+        });
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                users: [
+                    {id: 1, name: '莫涛'},
+                    {id: 2, name: '大海'},
+                    {id: 3, name: '紫薯'},
+                    {id: 4, name: '宝哥'},
+                    {id: 5, name: '小姐姐'},
+                    {id: 6, name: '央央'},
+                    {id: 7, name: 'licas'},
+                ],
+                uPage: 1,
+                prePage: 2,
+            },
+            computed: {
+                uPages() {
+                    return Math.ceil(this.users.length / this.prePage);
+                },
+                showUsers() {
+                    let start = (this.uPage - 1) * this.prePage;
+                    return this.users.slice(start, start + this.prePage);
+                }
+            },
+            methods: {
+            }
+        });
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html,body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<script>
+    // 设置 body 为可放置元素
+    document.body.ondragover = function(e) {
+        e.preventDefault()
+    }
+
+    // 处理放置后的行为
+    document.ondrop = function(e) {
+        // 放置浏览器打开文件这个默认行为
+        e.preventDefault()
+        e.stopPropagation()
+        Array.from(e.dataTransfer.items).forEach(item => {
+            /*
+                要获取当前item对象的FileSystemEntry对象，
+                通过该对象我们可以分辨出是文件还是文件夹
+            */
+            let entry = item.webkitGetAsEntry()
+            getFiles(entry)
+        })
+    }
+
+    function getFiles(entry) {
+        if(entry.isFile) {
+            // 如果是文件，直接转成File对象
+            entry.file(f =>  {
+                console.log(f) // File
+            }, err => {
+                console.log('读取失败')
+            })
+        }else if(entry.isDirectory){
+            console.log('我是一个目录')
+            // 创建一个目录读取对象
+            let dirReader = entry.createReader()
+            dirReader.readEntries(entries => {
+                console.log(entries)
+                entries.forEach(entry => {
+                    getFiles(entry)
+                })
+            })
+        }
+    }
+</script>
+</body>
+</html>

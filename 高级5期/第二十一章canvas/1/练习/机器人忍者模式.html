@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    // 设置画布宽高
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    // 画笔
+    const ctx = canvas.getContext('2d')
+
+    // 绘图
+    function render(color = 'red') {
+        // 填充色
+        ctx.fillStyle = color
+
+        // 描边颜色
+        ctx.strokeStyle = 'black'
+
+        // 描边宽度
+        ctx.lineWidth = 40
+
+        // 面部
+        ctx.fillRect(50, 250, 400, 200)
+        // 面部轮廓
+        ctx.strokeRect(50, 250, 400, 200)
+
+        // 眼部轮廓
+        ctx.clearRect(50, 300, 400, 60)
+
+        // 嘴巴
+        ctx.beginPath()
+        ctx.moveTo(150, 400)
+        ctx.lineTo(350, 400)
+        ctx.stroke()
+
+        // 左眼
+        ctx.beginPath()
+        ctx.arc(150, 330, 20, 0, Math.PI*2)
+        ctx.fill()
+
+        // 右眼
+        ctx.beginPath()
+        ctx.arc(350, 340, 20, 0, Math.PI, true)
+        ctx.fill()
+
+        // 左边天线
+        ctx.beginPath()
+        ctx.moveTo(50, 50)
+        ctx.bezierCurveTo(150, 50, 150, 250, 250, 250)
+        ctx.stroke()
+
+        // 右边天线
+        ctx.beginPath()
+        ctx.moveTo(250, 250)
+        ctx.bezierCurveTo(350, 250, 350, 50, 450, 50)
+        ctx.stroke()
+    }
+
+    let color = 'red'
+    render(color)
+
+    canvas.addEventListener('mousemove', function(e) {
+        const {left, top} = canvas.getBoundingClientRect()
+        const x = e.clientX - left
+        const y = e.clientY - top
+        let curColor = 'red'
+        if(x > 30 && x < 470 && y > 230 && y < 470) {
+            curColor = 'black'
+        }
+        if (color !== curColor) {
+            color = curColor
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            render(color)
+        }
+    })
+
+
+
+
+
+
+
+</script>

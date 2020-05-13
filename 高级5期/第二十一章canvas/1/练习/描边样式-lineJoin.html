@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    // 设置画布宽高
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight*2
+
+    // 画笔
+    const ctx = canvas.getContext('2d')
+
+    // 描边样式
+    ctx.strokeStyle = 'maroon'
+
+    // 描边宽度
+    ctx.lineWidth = 40
+
+    /*
+        lineJoin 描边拐角类型
+        miter
+        round
+        bevel
+    */
+    ctx.beginPath()
+    ctx.moveTo(50, 50)
+    ctx.lineTo(400, 50)
+    ctx.lineTo(200, 150)
+    ctx.lineJoin = 'miter'
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(50, 250)
+    ctx.lineTo(400, 250)
+    ctx.lineTo(200, 350)
+    ctx.lineJoin = 'round'
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(50, 450)
+    ctx.lineTo(400,450)
+    ctx.lineTo(200,550)
+    ctx.lineJoin = 'bevel'
+    ctx.stroke()
+
+
+
+</script>ctx

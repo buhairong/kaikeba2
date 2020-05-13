@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #wrap {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #list li {
+            font: 14px/30px "宋体";
+        }
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <ul id="list">
+
+    </ul>
+</div>    
+<script src="mTween.js"></script>
+<script>
+// 布局生成
+{
+    let list = document.querySelector("#list");
+    list.innerHTML = [...(".".repeat(200))].map((item,index)=>`<li>这是第${index}个li</li>`).join("");
+}
+class KKBScroll {
+    constructor(wrap,option){
+        this.wrap = wrap;
+        this.list = this.wrap.children[0];
+        this.startPoint = {};
+        this.startY = 0;
+        this.y = 0;//记录滚动位置
+        this.start = this.start.bind(this);
+        this.move = this.move.bind(this);
+        this.option = option; 
+        css( this.list,"translateY",0);
+        this.wrap.addEventListener("touchstart",this.start);
+        this.wrap.addEventListener("touchmove",this.move);
+    }
+    start(e){
+        let touch = e.changedTouches[0];
+        this.startPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        this.startY  = this.y;
+    }
+    move(e){
+        let touch = e.changedTouches[0];
+        let nowPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        let disPoint = {
+            x: nowPoint.x - this.startPoint.x,
+            y: nowPoint.y - this.startPoint.y
+        };
+        this.y =  this.startY + disPoint.y;
+        this.setScroll();
+    }
+    setScroll(){
+        css(this.list,"translateY",this.y);
+    }
+}
+// 自定义滚动条实现
+{
+    let wrap = document.querySelector("#wrap");
+    let scroll = new KKBScroll(wrap,{
+        scrollBar: false
+    });
+}
+</script>
+</body>
+</html>

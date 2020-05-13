@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+        #box2 {
+            position: absolute;
+            top: 200px;
+            left: 200px;
+            width: 100px;
+            height: 100px;
+            background: green;
+        }
+    </style>
+</head>
+<body>
+<div id="box">abcd</div>
+<div id="box2">abcd</div>
+<input type="text" speech x-webkit-speech onwebkitspeechchange=”alert(this.value)”>
+</body>
+</html>
+<script>
+    class Drag {
+        #el = null // 私有属性
+        constructor(el) {
+            this.#el = el
+            this.startEl = {} // 元素初始位置
+            this.startMouse = {} // 鼠标初始位置
+            this.start()
+        }
+
+        start() {
+            this.#el.addEventListener('mousedown', (e) => {
+                e.preventDefault()
+                this.startMouse = {
+                    x: e.clientX,
+                    y: e.clientY
+                }
+                this.startEl = this.getOffset()
+                this.onStart && this.onStart()
+                document.addEventListener('mousemove', this.move)
+                document.addEventListener('mouseup', () => {
+                    document.removeEventListener('mousemove', this.move)
+                    this.onEnd && this.onEnd()
+                },{once: true})
+            })
+        }
+
+        move = (e) => {
+            // 当前鼠标位置
+            let nowMouse = {
+                x: e.clientX,
+                y: e.clientY
+            }
+            // 移动距离
+            let disMouse = {
+                x: nowMouse.x - this.startMouse.x,
+                y: nowMouse.y - this.startMouse.y,
+            }
+
+            this.setOffset(disMouse)
+        }
+
+        // 记录元素当前位置
+        setOffset(dis) {
+            this.#el.style.left = dis.x + this.startEl.x + 'px'
+            this.#el.style.top = dis.y + this.startEl.y + 'px'
+        }
+
+        // 获取元素当前位置
+        getOffset() {
+            return {
+                x: parseFloat(getComputedStyle(this.#el)['left']),
+                y: parseFloat(getComputedStyle(this.#el)['top']),
+            }
+        }
+    }
+
+    {
+        let box = document.querySelector('#box')
+        let box2 = document.querySelector('#box2')
+        let dragEl1 = new Drag(box)
+        console.log(dragEl1)
+        let dragEl2 = new Drag(box2)
+        let cloneEl = null
+        dragEl2.onStart= () => {
+            cloneEl = box2.cloneNode(true)
+            document.body.appendChild(cloneEl)
+            box2.style.opacity = .5
+        }
+        dragEl2.onEnd= () => {
+            document.body.removeChild(cloneEl)
+            box2.style.opacity = 1
+        }
+    }
+</script>

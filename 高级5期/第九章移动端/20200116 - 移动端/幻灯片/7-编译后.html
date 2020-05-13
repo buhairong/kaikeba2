@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html {
+            font-size: 10vw;
+        }
+        body {
+            margin: 0;
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #wrap {
+            position: relative;
+            width: 100vw;
+            overflow: hidden;
+        }
+        #list {
+            float: left;
+            display: flex;
+            display: -webkit-box;
+        }
+        #list li {
+            flex: none;
+            width: 100vw;
+        }
+        #list img {
+            width: 100%;
+            display: block;
+        }
+        .nav {
+            position: absolute;
+            left: 0;
+            bottom: .2rem;
+            width: 100%;
+            text-align: center;
+            vertical-align: top;
+        }
+        .nav a {
+            display: inline-block;
+            width: .3rem;
+            height: .3rem;
+            background: #fff;
+            margin: 0 .1rem;
+            border-radius: .15rem;
+            transition: .3s;
+        }
+        .nav .active {
+            width: .6rem;  
+            color: #fff;  
+        }
+        .textList {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .textList li {
+            font: 14px/40px "宋体";
+            padding-left: 20px;
+            border-bottom: 1px solid #000;
+        }
+    </style>
+</head>
+<body>  
+<div id="wrap">
+    <ul id="list">
+        <li><img src="img/banner01.png" /></li>
+        <li><img src="img/banner02.png" /></li>
+        <li><img src="img/banner03.png" /></li>
+        <li><img src="img/banner04.png" /></li>
+    </ul>
+    <nav class="nav">
+        <a class="active"></a><a></a><a></a><a></a>
+    </nav>
+</div>  
+<ul class="textList">
+
+</ul>
+<script>
+"use strict";
+
+// 补充列表内容
+{
+  var txtList = document.querySelector(".textList");
+  txtList.innerHTML = [...(".".repeat(100))].map(function (item, index) {
+    return "<li>\u8FD9\u662F\u7B2C" + index + "\u4E2Ali</li>";
+  }).join("");
+} // 幻灯片
+
+/*
+    判断用户滑动方向时：
+        一旦判断到用户的滑动方向，就认定该次操作用户想要进行上下或左右滑动，中间不再修改,一直到用户下一次再执行 start
+*/
+
+{
+  var wrap = document.querySelector("#wrap");
+  var list = document.querySelector("#list");
+  list.innerHTML += list.innerHTML; // 把图片复制一份用来处理无缝
+
+  var startPoint = {}; // 摁下时手指位置
+
+  var startX = 0; // 摁下时元素的位置
+
+  var translateX = 0; // 元素的 tranlateX 值
+
+  var now = 0; //记录当前在第几张
+
+  var navs = document.querySelectorAll(".nav a");
+  var RANGE = wrap.clientWidth * .3; //超过该幅度切换上一张下一张
+
+  var isMove = false; // 是否需要滑动幻灯片
+
+  var isDir = true; // 记录是否已经判断到了方向 true 还没有判断到方向，false已经判断到了方向
+
+  wrap.addEventListener("touchstart", function (_ref) {
+    var changedTouches = _ref.changedTouches;
+    list.style.transition = "none";
+    var touch = changedTouches[0];
+    startPoint = {
+      x: touch.pageX,
+      y: touch.pageY
+    };
+
+    if (now == 0) {
+      //第1组第0张会有划出去的风险
+      now = navs.length;
+    } else if (now == navs.length * 2 - 1) {
+      // 第2组最后一张，有划出去的风险
+      now = navs.length - 1;
+    }
+
+    translateX = -now * wrap.clientWidth;
+    list.style.WebkitTransform = list.style.transform = "translateX(" + translateX + "px)";
+    startX = translateX;
+    isMove = false;
+    isDir = true;
+  });
+  wrap.addEventListener("touchmove", function (e) {
+    var touch = e.changedTouches[0];
+    var nowPoint = {
+      x: touch.pageX,
+      y: touch.pageY
+    };
+    var dis = {
+      x: nowPoint.x - startPoint.x,
+      y: nowPoint.y - startPoint.y
+    }; // 判断方向根据需求来阻止默认事件
+
+    if (isDir) {
+      if (Math.abs(dis.x) - Math.abs(dis.y) > 5) {
+        // 左右滑动
+        isMove = true;
+        isDir = false;
+      } else if (Math.abs(dis.y) - Math.abs(dis.x) > 5) {
+        // 上下滑动
+        isMove = false;
+        isDir = false;
+      }
+
+      e.preventDefault();
+    }
+
+    console.log(isMove, isDir);
+
+    if (isMove) {
+      translateX = startX + dis.x;
+      list.style.WebkitTransform = list.style.transform = "translateX(" + translateX + "px)";
+      e.preventDefault();
+    }
+  });
+  wrap.addEventListener("touchend", function (_ref2) {
+    var changedTouches = _ref2.changedTouches;
+    var touch = changedTouches[0];
+    var nowPoint = {
+      x: touch.pageX,
+      y: touch.pageY
+    };
+    var dis = {
+      x: nowPoint.x - startPoint.x,
+      y: nowPoint.y - startPoint.y
+    }; // 当移动的距离超过图片宽度的 30% 时 切换至下一张或上一张,否则回到当前张
+
+    if (Math.abs(dis.x) >= RANGE && isMove) {
+      // 切换上一张下一张
+      //console.log(dis.x,dis.x/Math.abs(dis.x));
+      now -= dis.x / Math.abs(dis.x);
+    } //console.log(-now*wrap.clientWidth);
+
+
+    translateX = -now * wrap.clientWidth;
+    list.style.transition = ".3s";
+    list.style.WebkitTransform = list.style.transform = "translateX(" + translateX + "px)";
+    navs.forEach(function (nav) {
+      nav.classList.remove("active");
+    });
+    navs[now % navs.length].classList.add("active");
+  });
+}
+</script>
+
+</body>
+</html>

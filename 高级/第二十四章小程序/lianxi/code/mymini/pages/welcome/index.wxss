@@ -1,5 +1,0 @@
-.myContainer {
-  width: 750rpx;
-  height: 100px;
-  background: red;
-}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d')
+
+    // 色系
+    const [redA, redB, yellow] = ['#db655c', '#d63d46', '#9f8d7d']
+
+    // 一圈的弧度
+    const c = Math.PI*2
+
+    // canvas 宽高
+    const {width, height} = canvas
+
+    !(function render() {
+        // 清理画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        // 绘图
+        draw()
+
+        // 请求动画帧
+        requestAnimationFrame(render)
+    })()
+
+    // 绘图
+    draw()
+
+    function draw() {
+        ctx.save()
+
+        // 整体偏移
+        ctx.translate(width/2, height/2)
+
+        // 整体旋转
+        ctx.rotate(-Math.PI/2)
+
+        // 钟表的表框
+        // 内框
+        ctx.save()
+        ctx.lineWidth = 20
+        ctx.strokeStyle = redA
+        ctx.beginPath()
+        ctx.arc(0, 0, 145, 0, c)
+        ctx.stroke()
+        ctx.restore()
+
+        // 外框
+        ctx.save()
+        ctx.lineWidth = 9
+        ctx.strokeStyle = redB
+        ctx.beginPath()
+        ctx.arc(0, 0, 155, 0, c)
+        ctx.stroke()
+        ctx.restore()
+
+        // 刻度 4个
+        ctx.save()
+        ctx.lineWidth = 15
+        ctx.strokeStyle = redB
+        ctx.beginPath()
+        for(let i=0; i<4; i++) {
+            ctx.moveTo(90, 0)
+            ctx.lineTo(120, 0)
+            ctx.stroke()
+            ctx.rotate(Math.PI/2)
+        }
+        ctx.restore()
+
+        // 小时刻度
+        ctx.save()
+        ctx.lineWidth = 6
+        ctx.strokeStyle = yellow
+        ctx.beginPath()
+        for(let i=0; i< 12; i++) {
+            if(i%3 !== 0) {
+                ctx.moveTo(90, 0)
+                ctx.lineTo(120, 0)
+                ctx.stroke()
+            }
+            ctx.rotate(Math.PI/6)
+        }
+        ctx.restore()
+
+        // 分刻度
+        ctx.save()
+        ctx.lineWidth = 3
+        ctx.strokeStyle = yellow
+        ctx.beginPath()
+        for(let i=0; i< 60; i++) {
+            if(i%5 !== 0) {
+                ctx.moveTo(118, 0)
+                ctx.lineTo(120, 0)
+                ctx.stroke()
+            }
+            ctx.rotate(Math.PI/30)
+        }
+        ctx.restore()
+
+        // 基于当前时间获取时针、分针、秒针的弧度
+        const {rh, rm, rs} = getRadian()
+
+        // 时针
+        ctx.save()
+        ctx.lineWidth = 9
+        ctx.strokeStyle = yellow
+        ctx.rotate(rh)
+        ctx.beginPath()
+        ctx.moveTo(-20, 0)
+        ctx.lineTo(60, 0)
+        ctx.stroke()
+        ctx.restore()
+
+        // 分针
+        ctx.save()
+        ctx.lineWidth = 4
+        ctx.strokeStyle = yellow
+        ctx.rotate(rm)
+        ctx.beginPath()
+        ctx.moveTo(-28, 0)
+        ctx.lineTo(80, 0)
+        ctx.stroke()
+        ctx.restore()
+
+        // 秒针
+        ctx.save()
+        ctx.lineWidth = 2
+        ctx.strokeStyle = redB
+        ctx.rotate(rs)
+        ctx.beginPath()
+        ctx.moveTo(-30, 0)
+        ctx.lineTo(88, 0)
+        ctx.stroke()
+        ctx.restore()
+
+        // 圆心
+        ctx.save()
+        ctx.fillStyle = redB
+        ctx.beginPath()
+        ctx.arc(0, 0, 10, 0, c)
+        ctx.fill()
+        ctx.restore()
+
+        ctx.restore()
+    }
+
+    // 基于当前时间获取时针、分针、秒针的弧度
+    function getRadian() {
+        // 获取当前时间
+        let date = new Date()
+
+        // 当前小时
+        let h = date.getHours()
+        if(h > 12) h=-12
+
+        // 当前分钟
+        let m = date.getMinutes()
+
+        // 当前秒
+        let s = date.getSeconds()
+
+        // 时针旋转弧度
+        const rh = c/12*h + c/12/60*m + c/12/60/60*s
+
+        // 分针旋转弧度
+        const rm = c/60*m + c/60/60*s
+
+        // 秒针旋转弧度
+        const rs = c/60*s
+
+        return {rh, rm, rs}
+    }
+
+
+
+</script>

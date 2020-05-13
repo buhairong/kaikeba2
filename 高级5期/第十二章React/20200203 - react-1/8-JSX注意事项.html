@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="js/react.js"></script>
+    <script src="js/react-dom.js"></script>
+    <script src="js/babel.js"></script>
+</head>
+<body>
+<div id="root"></div>  
+<!--
+    <div id="root">
+        <header>
+            <h1><h1>
+                p
+        </header>
+        <div>
+            <ul>
+                <li>
+                    <a></a>
+                    <span></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+-->  
+<script type="text/babel">
+/*
+JSX 是一个基于 JavaScript + XML 的一个扩展语法
+    - 它可以作为值使用
+    - 它并不是字符串
+    - 它也不是HTML
+    - 它可以配合JavaScript 表达式一起使用
+    - class 要写做 className
+    - style 接收的是一个对象，并不是字符串
+    - 所有的标签名必须是小写
+    - 所有的标签必须闭合哪怕是单标签
+    - 每次只能输出一个标签(或者说必须有包含父级)
+*/
+let style = {
+    width: "100px",
+    height: "100px",
+    background: "red"
+};
+// ReactDOM.render(
+//     <div>
+//         <div className="box" style={style}></div>
+//         <input type="text" />
+//     </div>,
+//     document.querySelector("#root")
+// ); 
+ReactDOM.render(
+    <div>
+        <div className="box" style={{
+    width: "100px",
+    height: "100px",
+    background: "red"
+}}></div>
+        <input type="text" />
+    </div>,
+    document.querySelector("#root")
+);  
+</script>    
+</body>
+</html>

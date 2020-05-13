@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #canvas {
+            background: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>
+<script>
+    const canvas = document.getElementById('canvas')
+    // 设置画布宽高
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    // 画笔
+    const ctx = canvas.getContext('2d')
+
+    /*
+        建立渐变对象, 定义渐变的区域
+        线性渐变： createLinearGradient(x1,y1,x2,y2)
+        x1,y1：开始位置
+        x2,y2：结束位置
+    */
+    const gr = ctx.createLinearGradient(50, 50, 350, 350)
+
+    /*
+        为渐变添加颜色节点: addColorStop(position, color)
+    */
+    gr.addColorStop(0, 'red')
+    gr.addColorStop(0.5, 'yellow')
+    gr.addColorStop(1, 'green')
+
+    // 为样式赋值
+    ctx.fillStyle = gr
+
+    // 绘图
+    ctx.fillRect(50, 50, 300, 300)
+</script>ctx

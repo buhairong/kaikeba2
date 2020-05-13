@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #list {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #list li {
+            font: 20px/38px "宋体";
+            text-indent: 2em;
+            border-bottom: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <ul id="list"></ul>
+</div>    
+<script>
+{
+    let list = document.querySelector("#list");
+    list.innerHTML = [...(".".repeat(100))].map((item,index)=>{
+        return `<li>这是第${index}个li</li>`;
+    }).join("");
+}
+document.addEventListener("touchstart",(e)=>{
+    e.preventDefault();
+},{passive:false});
+/*滑屏的实现原理*/
+/*
+    元素拖拽后位置 = (移动后的手指位置 - 摁下时手指位置) + 元素摁下时位置
+*/
+function css(el,attr,val){
+    if(val === undefined){
+        return parseFloat(getComputedStyle(el)[attr]);
+    }
+    el.style[attr] = val + "px";
+}
+{
+    let box = document.querySelector("#box");
+    let list = document.querySelector("#list");
+    let startPoint = {};
+    let startY = 0;
+    box.addEventListener("touchstart",({changedTouches})=>{
+        let touch = changedTouches[0];
+        startPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        startY = css(list,"top");
+    });
+    box.addEventListener("touchmove",({changedTouches})=>{
+        let touch = changedTouches[0];
+        let nowPoint = {
+            x: touch.pageX,
+            y: touch.pageY
+        };
+        let dis = {
+            x: nowPoint.x - startPoint.x,
+            y: nowPoint.y - startPoint.y
+        };
+        //console.log(dis);
+        css(list,"top",dis.y + startY);
+    });
+}
+</script>       
+</body>
+</html>

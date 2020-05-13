@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination a {
+            padding: 5px 12px;
+            border: 1px solid #3ba9ff;
+            text-decoration: none;
+            margin: 5px;
+        }
+        .pagination a.active {
+            background: #3ba9ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+
+        <ul>
+            <li v-for="user of showUsers" :key="user.id">
+                {{user.name}}
+            </li>
+        </ul>
+
+        <k-pagination :total="users.length" :pre-page="prePage" :page.sync="uPage">
+            <span style="color:red" slot="header">开课吧友情赞助</span>
+
+            <template v-slot:footer="props">
+                <span>一共有{{props.pages}}页，当前第{{props.page}}页</span>
+            </template>
+        </k-pagination>
+
+
+    </div>
+
+    <script src="./js/vue.js"></script>
+    <script>
+
+        /**
+         * 组件->插槽
+         */
+        Vue.component('k-pagination', {
+            props: ['total', 'page', 'prePage'],
+            data() {
+                return {
+                    pages: Math.ceil(this.total / this.prePage)
+                }
+            },
+            template: `
+                <div class="pagination">
+                    <slot name="header"></slot>
+                    <a href="" @click.prevent="prev">上一页</a>
+                    <a
+                        href=""
+                        v-for="p of pages"
+                        :class="{'active': p === page}"
+                        @click.prevent="gotoPage(p)"
+                    >
+                        {{p}}
+                    </a>
+                    <a href="">下一页</a>
+                    <slot name="footer" :pages="pages" :page="page"></slot>
+                </div>
+            `,
+            methods: {
+                gotoPage(p) {
+                    this.$emit('update:page', p);
+                },
+                prev() {
+                    this.$emit('update:page', this.page - 1);
+                }
+            }
+        });
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                users: [
+                    {id: 1, name: '莫涛'},
+                    {id: 2, name: '大海'},
+                    {id: 3, name: '紫薯'},
+                    {id: 4, name: '宝哥'},
+                    {id: 5, name: '小姐姐'},
+                    {id: 6, name: '央央'},
+                    {id: 7, name: 'licas'},
+                ],
+                uPage: 1,
+                prePage: 2,
+            },
+            computed: {
+                showUsers() {
+                    let start = (this.uPage - 1) * this.prePage;
+                    return this.users.slice(start, start + this.prePage);
+                }
+            }
+        });
+
+
+    </script>
+
+</body>
+</html>

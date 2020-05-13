@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+let obj = {
+    a: 1,
+    b: function() {
+        let f = ()=>{
+            return this; // 箭头函数本身没有this，调用其所在作用域的 this
+        }
+        return f();
+    }
+}
+let fn = obj.b;
+console.log(obj.b()); // 对象的属性调用：this 指向对象
+console.log(fn()); // window
+</script>    
+</body>
+</html>

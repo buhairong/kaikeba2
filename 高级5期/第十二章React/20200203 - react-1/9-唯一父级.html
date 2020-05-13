@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="js/react.js"></script>
+    <script src="js/react-dom.js"></script>
+    <script src="js/babel.js"></script>
+</head>
+<body>
+<div id="root"></div>  
+<!--
+    <div id="root">
+        <header>
+            <h1><h1>
+                p
+        </header>
+        <div>
+            <ul>
+                <li>
+                    <a></a>
+                    <span></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+-->  
+<script type="text/babel">
+/*
+注意 JSX 在输出时，必须有一个唯一的包含父级，如果我们不希望这个父级在DOM渲染出来，可以使用- React.Fragment
+*/
+let style = {
+    width: "100px",
+    height: "100px",
+    background: "red"
+};
+let {Fragment} = React;
+ReactDOM.render(
+    <Fragment>
+        <div className="box" style={style}></div>
+        <input type="text" />
+    </Fragment>,
+    document.querySelector("#root")
+);  
+</script>    
+</body>
+</html>

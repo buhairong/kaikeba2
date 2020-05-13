@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>立方体</title>
+    <style>
+        body {margin: 0;overflow: hidden}
+    </style>
+</head>
+<body>
+<!--canvas 用于显示webgl 绘制的图像-->
+<canvas id="canvas"></canvas>
+<!--引入three.js 工具-->
+<script src="/com/js/three.js"></script>
+<!--引入轨道控制器OrbitControls.js，此控制器会直接挂载到three.js暴露出的THREE对象上-->
+<script src="/com/js/OrbitControls.js"></script>
+<script>
+    /*解构常用对象，方便调用*/
+    const {
+        BoxBufferGeometry,DirectionalLight,Mesh,MeshPhongMaterial,OrbitControls,OrthographicCamera,PerspectiveCamera,Scene,WebGLRenderer,
+    }=THREE;
+
+    /*获取canvas 元素
+    * 获取视口尺寸：viewW,viewH
+    * */
+    const canvas=document.querySelector('#canvas');
+    let [viewW,viewH]=[window.innerWidth,window.innerHeight];
+
+    /*渲染器对象 WebGLRenderer
+    * setSize(viewW, viewH)：设置渲染尺寸
+    * */
+    const renderer=new WebGLRenderer({canvas});
+    renderer.setSize(viewW,viewH);
+
+    /*场景对象 Scene*/
+    const scene=new Scene();
+
+    /*透视相机PerspectiveCamera(fov,aspect,near,far)
+    * fov：摄像机视锥体垂直视野角度，如45
+    * aspect：摄像机视锥体长宽比，如 viewW / viewH
+    * near：摄像机视锥体近端面，如0.01
+    * far：摄像机视锥体远端面，如10
+    * 属性：
+    *   position 相机位置
+    * 方法：
+    *   lookAt() 设置目标点位
+    * */
+    const camera=new PerspectiveCamera(45,viewW/viewH,0.01,10);
+    camera.position.set(1,1,1);
+    camera.lookAt(scene.position);
+    scene.add(camera);
+
+    /*灯光
+    * DirectionalLight(color,intensity) 平行光
+    *   color 颜色，如0xffffff
+    *   intensity 亮度，如1.2、0.5...
+    *   position 位置
+    * */
+    //主光源 -0.5,1,0.8
+    const light1=new DirectionalLight(0xffffff,1.2);
+    light1.position.set(-0.5,1,0.8);
+    scene.add(light1);
+
+    //辅光源 1.5,-0.8,-1
+    const light2=new DirectionalLight(0xffffff,0.5);
+    light2.position.set(1.5,-0.8,-1);
+    scene.add(light2);
+
+
+    /*绘图*/
+    {
+        /*高光材质 MeshPhongMaterial(options)
+        *   color 颜色，如0xeeeeee
+        * */
+        const mat=new MeshPhongMaterial({
+            color:0xeeeeee
+        });
+
+        /*立方体模型 BoxBufferGeometry(w,h,d)*/
+        const geo=new BoxBufferGeometry(0.5,0.5,0.5);
+
+        /*网格对象 Mesh(geometry,material)*/
+        const mesh=new Mesh(geo,mat);
+
+        /*将网格对象添加到场景*/
+        scene.add(mesh);
+
+    }
+
+    /*轨道控制器 OrbitControls*/
+    const orbitControls=new OrbitControls(camera);
+
+
+    /*当轨道控制器orbitCtrl 发生改变时，进行渲染
+    * addEventListener 事件的监听方法
+    * change 事件
+    * */
+    orbitControls.addEventListener('change',function(){
+        render();
+    })
+
+
+    /*渲染*/
+    render();
+
+
+    /*自适应窗口
+    * onresize 自适应窗口尺寸
+    * 重新获取视口尺寸：viewW,viewH
+    * setSize(w,h)设置渲染器尺寸
+    * aspect 属性设置相机视椎体长宽比，如viewW / viewH
+    * updateProjectionMatrix() 更新相机的投影矩阵
+    * 重新渲染
+    * */
+    window.onresize=function(){
+        [viewW,viewH]=[window.innerWidth,window.innerHeight];
+        renderer.setSize(viewW,viewH);
+        camera.aspect=viewW/viewH;
+        camera.updateProjectionMatrix();
+        render();
+    }
+
+
+    /*渲染方法 render(scene, camera) */
+    function render(){
+        renderer.render(scene,camera);
+    }
+
+</script>
+</body>
+</html>

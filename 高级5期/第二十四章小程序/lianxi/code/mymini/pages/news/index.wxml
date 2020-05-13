@@ -1,0 +1,9 @@
+<view class="newsContainer">
+	<view class="newsItem" wx:for="{{newsData}}" wx:key="id" bindtap="showDetail" data-id="{{item.id}}">
+		<image src="{{item.imgUrl}}"></image>
+		<view class="item">
+			<text>{{item.title}}</text>
+			<text>{{item.newTime}}</text>
+		</view>
+	</view>
+</view>

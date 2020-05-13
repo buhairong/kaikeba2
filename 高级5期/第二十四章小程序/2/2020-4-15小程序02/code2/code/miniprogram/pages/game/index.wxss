@@ -1,0 +1,18 @@
+/* pages/game/index.wxss */
+.avatorContainer{
+  display: flex;
+  justify-content: center;
+}
+.avatorItem{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10rpx;
+}
+
+.avatorItem image {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+}
+

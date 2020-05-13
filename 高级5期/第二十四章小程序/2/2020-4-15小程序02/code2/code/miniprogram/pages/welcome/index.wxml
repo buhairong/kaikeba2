@@ -1,0 +1,10 @@
+<!--pages/welcome/index.wxml-->
+<view>
+<my-component
+myvalue="我的值"
+bind:myevent="myevent"
+>
+<view>我是插槽里的内容</view>
+<view slot="mySlot">我是具名插槽</view>
+</my-component>
+</view>
