@@ -1,0 +1,124 @@
+body, ul, div, video, li {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+}
+
+#video-play {
+    position: relative;
+    margin: 100px auto 0;
+    border: 1px solid #000;
+    width: 512px;
+    height: 384px;
+    cursor: pointer;
+}
+
+#video-play video {
+    width: 100%;
+    height: 100%;
+}
+
+#video-play .control {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    width: 100%;
+    transition: .5s all;
+}
+
+#video-play:hover .control {
+    opacity: 1;
+}
+
+#video-play .progress-container {
+    position: relative;
+    z-index: 100;
+    width: 100%;
+    height: 10px;
+}
+
+#video-play .progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 6px;
+    transition: .5s all;
+}
+
+#video-play .progress-range {
+    background: rgba(255, 255, 255, .2);
+}
+
+#video-play .progress-loaded {
+    width: 0;
+    background: rgba(255, 255, 255, .6);
+    transition: .5s all;
+}
+
+#video-play .progress-played {
+    width: 0;
+    background: #2f88cd;
+}
+
+#video-play .progress-loaded {
+    width: 0;
+    background: red;
+}
+
+.control-wrap {
+    background: rgba(0, 0, 0, .3);
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+
+.control-wrap>div {
+    margin: 0 10px;
+}
+
+
+.progress-bar {
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    width: 14px;
+    height: 14px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+}
+
+
+#video-play .message {
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 10px;
+    background: rgba(0, 0, 0, .6);
+    color: white;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+    transition: .5s all;
+}
+
+#video-play .control-speed-box {
+    display: none;
+    position: absolute;
+    left: -15px;
+    bottom: 30px;
+    padding: 10px 15px 10px 10px;
+    height: 160px;
+    background: rgba(0, 0, 0, .6);
+    text-align: center;
+    font-size: 14px;
+}
+
+#video-play .control-speed-box li:hover,
+#video-play .control-speed-box .focus{
+    color: rgba(0, 150, 255, 1);
+}
