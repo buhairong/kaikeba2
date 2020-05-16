@@ -106,16 +106,25 @@ li {
     transition: .5s all;
 }
 
+.speed {
+    position: relative;
+}
+
 #video-play .control-speed-box {
-    display: none;
+    /*display: none;*/
     position: absolute;
     left: -15px;
-    bottom: 30px;
+    bottom: 0px;
     padding: 10px 15px 10px 10px;
     height: 160px;
     background: rgba(0, 0, 0, .6);
     text-align: center;
     font-size: 14px;
+    color: #fff;
+}
+
+#video-play .control-speed-box li {
+    padding: 5px 0;
 }
 
 #video-play .control-speed-box li:hover,

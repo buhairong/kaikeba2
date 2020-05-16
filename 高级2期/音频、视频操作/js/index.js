@@ -90,6 +90,15 @@ let methods = {
         }
         console.log(configs.bufferedEnd)
         els.progressLoaded.style.width = els.progressContainer.clientWidth * (configs.bufferedEnd / els.video.duration) + 'px'
+    },
+    ratechange() {
+        els.controlSpeedList.forEach(list => {
+            if(list.dataset.rate === els.video.playbackRate) {
+                list.classList.add('focus')
+            }else{
+                list.classList.remove('focus')
+            }
+        })
     }
 }
 
@@ -101,6 +110,7 @@ els.video.onpause = methods.pause
 els.video.ondurationchange = methods.durationchange
 els.video.ontimeupdate = methods.timeupdate
 els.video.onprogress = methods.progress
+els.video.onratechange = methods.ratechange
 
 els.videoPlayer.onclick = function(e) {
     let target = e.target
@@ -113,3 +123,19 @@ els.videoPlayer.onclick = function(e) {
         methods.showMessage(`当前时间：${helpers.formatDutation(els.video.currentTime * 1000)}`)
     }
 }
+
+// 显示隐藏播放速度面板
+// els.speed.onmouseenter = function() {
+//     els.controlSpeedBox.style.display = 'block'
+// }
+//
+// els.speed.onmouseleave = function() {
+//     els.controlSpeedBox.style.display = 'none'
+// }
+
+els.controlSpeedList.forEach(list => {
+    list.onclick = function() {
+        els.video.playbackRate = this.dataset.rate
+        methods.showMessage(`当前速度：${els.video.playbackRate}`)
+    }
+})
