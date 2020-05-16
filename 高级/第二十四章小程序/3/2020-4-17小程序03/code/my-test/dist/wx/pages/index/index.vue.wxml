@@ -1,0 +1,18 @@
+<import src="/components/card.vue.wxml" /><template name="634a12d2">
+  <view bindtap="handleProxy" data-eventid="{{'3'}}" data-comkey="{{$k}}" class="_div data-v-4f98e305">
+    <view class="_div data-v-4f98e305">hello mpvue</view> <text class="_text data-v-4f98e305">文本内容</text>
+    <view class="_div data-v-4f98e305 userinfo" bindtap="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}">
+      <image class="_img data-v-4f98e305 userinfo-avatar" wx:if="{{userInfo.avatarUrl}}" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+      <image class="_img data-v-4f98e305 userinfo-avatar" src="/static/images/user.png" background-size="cover"></image>
+      <view class="_div data-v-4f98e305 userinfo-nickname"><template data="{{...$root[$kk+'0'], $root}}" is="523cf39e"></template></view>
+    </view>
+    <view class="_div data-v-4f98e305 usermotto">
+      <view class="_div data-v-4f98e305 user-motto"><template data="{{...$root[$kk+'1'], $root}}" is="523cf39e"></template></view>
+    </view>
+    <form class="_form data-v-4f98e305 form-container"><input type="text" class="_input data-v-4f98e305 form-control" value="{{motto}}" placeholder="v-model" /> <input type="text" class="_input data-v-4f98e305 form-control" value="{{motto}}" bindinput="handleProxy" placeholder="v-model" data-eventid="{{'1'}}" data-comkey="{{$k}}" /> <input type="text" class="_input data-v-4f98e305 form-control" value="{{motto}}" bindblur="handleProxy" placeholder="v-model.lazy" data-eventid="{{'2'}}" data-comkey="{{$k}}" /></form>
+    <view class="_div data-v-4f98e305 all">
+      <view class="_div data-v-4f98e305 left"></view>
+      <view class="_div data-v-4f98e305 right"></view>
+    </view>
+  </view>
+</template>

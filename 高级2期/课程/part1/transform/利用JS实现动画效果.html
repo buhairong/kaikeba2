@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            position: absolute;
+            top :100px;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+<button id="run">跑</button>
+<button id="stop">停</button>
+<div id="box"></div>
+</body>
+</html>
+<script>
+(function(){
+    var run = document.getElementById("run");
+    var stop = document.getElementById("stop");
+    var box = document.getElementById("box");
+    var x = 0;
+    var speed = 10;
+    var timer = 0;
+
+    run.onclick = function(){
+        clearInterval(timer);
+        timer = setInterval(function(){
+            //var l = parseFloat(getComputedStyle(box)["left"]);
+            //box.style.left = l + 1 + "px";
+
+            x += speed;
+            box.style.transform = 'translateX(' + x + 'px)';
+        }, 20);
+    }
+
+    stop.onclick = function(){
+        clearInterval(timer);
+    }
+
+
+    /*
+        人眼每秒可识别24帧，超过24帧在人的眼睛中，就会形成连续动画的错觉
+    */
+})()
+</script>

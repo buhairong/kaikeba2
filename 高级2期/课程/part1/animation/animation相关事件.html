@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        /* 动画帧 */
+        @keyframes move {
+            0% {
+                width: 100px;
+                height: 100px;
+            }
+            25% {
+                width: 100px;
+                height: 300px;
+            }
+            50% {
+                width: 300px;
+                height: 300px;
+            }
+            75% {
+                width: 300px;
+                height: 100px;
+            }
+            100% {
+                width: 100px;
+                height: 100px;
+            }
+        }
+        #box {
+            width: 100px;
+            height: 100px;
+            background: red;
+            animation: move 2s 4;
+            animation-fill-mode: forwards;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+</body>
+</html>
+<script>
+    (function(){
+        var box = document.querySelector("#box")
+        box.addEventListener("animationstart", function(){
+            console.log("动画开始")
+        })
+        box.addEventListener("animationend", function(){
+            console.log("动画结束")
+        })
+        // animationiteration 动画多次执行时，使用，监听动画又开始
+        box.addEventListener("animationiteration", function(){
+            console.log("动画又开始")
+        })
+    })()
+</script>

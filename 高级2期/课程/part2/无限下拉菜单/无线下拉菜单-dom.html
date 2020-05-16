@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="data.js"></script>
+    <style>
+        ul ul{
+            display: none;
+        }
+
+        .show{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="view">
+        <!--<ul>
+            <li>
+                <p>一级标题</p>
+                <ul>
+                    <li>
+                        <p>二级标题</p>
+                        <ul>
+                            <li>
+                                ...
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>-->
+    </div>
+</body>
+</html>
+<script>
+    let view = document.querySelector('.view')
+
+    function addUl(data) {
+        let inner = document.createElement('ul')
+
+
+
+        // 循环data累加li标签
+        data.forEach(item => {
+            let li = document.createElement('li')
+            let p = document.createElement('p')
+            let ul = document.createElement('ul')
+            p.innerHTML = item.title
+            ul = getChild(item.id) && addUl(getChild(item.id))
+            li.appendChild(p)
+            li.appendChild(ul)
+            inner.appendChild(li)
+        })
+
+        return inner
+    }
+
+    view.appendChild(addUl(getChild(-1)))
+
+    // 通过id获取子级
+    function getChild(id) {
+        return data.filter(item => item.pid === id)
+    }
+
+    let lists = document.querySelectorAll('p')
+
+    lists.forEach(item=>{
+        item.onclick=function(){
+            let ul = this.nextElementSibling;
+            ul.classList.toggle('show');
+        }
+    })
+
+</script>

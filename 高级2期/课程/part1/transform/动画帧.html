@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            position: absolute;
+            top :100px;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+<button id="run">跑</button>
+<button id="stop">停</button>
+<div id="box"></div>
+</body>
+</html>
+<script>
+    (function(){
+        var run = document.getElementById("run");
+        var stop = document.getElementById("stop");
+        var box = document.getElementById("box");
+        var x = 0;
+        var speed = 10;
+        var timer = 0;
+
+        run.onclick = function(){
+            cancelAnimationFrame(timer);
+            timer = requestAnimationFrame(move);
+            function move(){
+                x += speed;
+                box.style.transform = 'translateX('+x+'px)';
+                timer = requestAnimationFrame(move);
+            }
+        }
+
+        stop.onclick = function(){
+            cancelAnimationFrame(timer);
+        }
+
+        /*
+        *   requestAnimationFrame
+        *   1. 计算器显示器刷新频率一般是60Hz,相当于每秒重绘60次
+        *   2. 动画帧采用的是系统时间间隔，它与计算机屏幕重绘频率保持一致(高性能，视觉佳)
+        *   3. 定时器执行时间间隔不精确
+        *   4. 与 setTimeout 类似，只会执行一次，如果我们希望动画连续执行，就需要用递归重复调用
+        *   5. 屏幕每次渲染时就会调用, 当前次 requestAnimationFrame 中的函数
+        *
+        *   index requestAnimationFrame(fn)  开启一个动画帧
+        *   cancelAnimationFrame(index)  关闭动画帧
+        */
+
+    })()
+</script>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    let p = new Promise((resolve, reject) => {
+        // 请求一张图片
+        let img = new Image()
+        img.src = 'http://img.qqzhi.com/uploads/2019-02-28/093640204.jpg'
+        img.onload = function(){
+            resolve('成功了')
+        }
+
+        img.onerror = function(){
+            reject('失败了')
+        }
+    })
+
+    p.then((info) => {
+        console.log(info)
+    }, (error) => {
+        console.log(error)
+    })
+</script>

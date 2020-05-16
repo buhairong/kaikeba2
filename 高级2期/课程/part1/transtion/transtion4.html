@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            width: 100px;
+            height: 100px;
+            background: red;
+            transition: 2s;
+        }
+    </style>
+</head>
+<body>
+<button id="btn">显示</button>
+<div id="box"></div>
+</body>
+</html>
+<script>
+var btn = document.getElementById("btn")
+var box = document.getElementById("box")
+btn.onclick = function(){
+    box.style.width = "500px"
+}
+
+// transitionend 事件，监听元素的transition 动画执行完毕
+// WebKitTransitionEnd --> 低版本 webkit 需要这么写
+/*box.ontransitionend = function () {
+    console.log("动画执行完了")
+}*/
+
+box.addEventListener('transitionend', function(){
+    console.log("动画执行完了")
+})
+box.addEventListener('WebKitTransitionend', function(){
+    console.log("动画执行完了1")
+})
+</script>

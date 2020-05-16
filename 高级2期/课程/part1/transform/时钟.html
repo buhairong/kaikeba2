@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>时钟</title>
+    <style>
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #time {
+            margin: 100px auto;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 4px solid red;
+            border-radius: 50%;
+        }
+        .clock {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        .clock li {
+            position: absolute;
+            left: 99px;
+            top: 0;
+            width: 2px;
+            height: 10px;
+            background: rosybrown;
+            transform-origin: center 100px;
+        }
+        .clock li:nth-of-type(5n+1) {
+            width: 4px;
+            height: 15px;
+            left: 98px;
+            background: red;
+        }
+        #hour {
+            position: absolute;
+            top: 40px;
+            left: 96px;
+            width: 8px;
+            height: 60px;
+            background: #000;
+            transform-origin: center bottom;
+        }
+        #minute {
+            position: absolute;
+            top: 30px;
+            left: 98px;
+            width: 4px;
+            height: 70px;
+            background: rosybrown;
+            transform-origin: center bottom;
+        }
+        #second {
+            position: absolute;
+            top: 10px;
+            left: 99px;
+            width: 2px;
+            height: 90px;
+            background: red;
+            transform-origin: center bottom;
+        }
+        #icon {
+            position: absolute;
+            left: 90px;
+            top: 90px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="time">
+        <ul class="clock">
+            <!--<li style="transform: rotate(0deg)"></li>
+            <li style="transform: rotate(6deg)"></li>
+            <li style="transform: rotate(12deg)"></li>
+            <li style="transform: rotate(18deg)"></li>
+            <li style="transform: rotate(24deg)"></li>
+            <li style="transform: rotate(30deg)"></li>
+            <li style="transform: rotate(36deg)"></li>
+            <li style="transform: rotate(42deg)"></li>-->
+        </ul>
+        <div id="hour"></div>
+        <div id="minute"></div>
+        <div id="second"></div>
+        <div id="icon"></div>
+    </div>
+</body>
+</html>
+<script>
+// 刻度生成
+(function(){
+    var clock = document.getElementsByClassName('clock')[0];
+    var inner = '';
+    for (var i=0; i<60; i++) {
+        inner += '<li style="transform: rotate('+(i*6)+'deg)"></li>';
+    }
+    clock.innerHTML = inner;
+})();
+
+// 时间
+(function(){
+    var hour = document.getElementById('hour');
+    var minute = document.getElementById('minute');
+    var second = document.getElementById('second');
+
+    toTime();
+    setInterval(toTime, 1000);
+    function toTime () {
+        var date = new Date();
+        var seconds = date.getSeconds();
+        var minutes = date.getMinutes() + seconds/60;
+        var hours = date.getHours() + minutes/60;
+
+        second.style.transform = 'rotate('+seconds*6+'deg)';
+        minute.style.transform = 'rotate('+minutes*6+'deg)';
+        hour.style.transform = 'rotate('+hours*30+'deg)';
+    }
+})();
+</script>

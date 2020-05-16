@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            margin: 0 auto;
+            width: 200px;
+            height: 200px;
+            padding: 200px;
+            border: 2px solid #000;
+            perspective: 200px;
+        }
+        #div {
+            transition: 3s;
+            width: 200px;
+            height: 200px;
+            background: red;
+            font: 140px/200px "宋体";
+            color: #fff;
+            text-align: center;
+            transform-style: preserve-3d;
+            /*
+                在元素进行3D变换时，是否保留子元素3D变换
+            */
+        }
+        #div span {
+            display: block;
+            width: 200px;
+            height: 200px;
+            background: yellow;
+            transform: rotateX(45deg)
+        }
+        #box:hover #div{
+            transform: rotateY(360deg);
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <div id="div">
+        <span></span>
+    </div>
+</div>
+</body>
+</html>

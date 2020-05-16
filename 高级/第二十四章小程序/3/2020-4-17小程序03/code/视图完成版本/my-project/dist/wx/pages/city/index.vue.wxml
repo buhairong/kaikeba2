@@ -1,0 +1,33 @@
+<template name="851e34e6">
+  <view class="_div data-v-b828a386 city_container">
+    <view class="_div data-v-b828a386 right-letter"><label class="_span data-v-b828a386">热门</label> <label class="_span data-v-b828a386">A</label> <label class="_span data-v-b828a386">B</label> <label class="_span data-v-b828a386">C</label> <label class="_span data-v-b828a386">D</label> <label class="_span data-v-b828a386">E</label> <label class="_span data-v-b828a386">F</label> <label class="_span data-v-b828a386">G</label> <label class="_span data-v-b828a386">H</label> <label class="_span data-v-b828a386">I</label> <label class="_span data-v-b828a386">J</label> <label class="_span data-v-b828a386">K</label> <label class="_span data-v-b828a386">L</label> <label class="_span data-v-b828a386">M</label> <label class="_span data-v-b828a386">N</label> <label class="_span data-v-b828a386">O</label> <label class="_span data-v-b828a386">P</label> <label class="_span data-v-b828a386">Q</label> <label class="_span data-v-b828a386">R</label> <label class="_span data-v-b828a386">S</label> <label class="_span data-v-b828a386">T</label> <label class="_span data-v-b828a386">U</label> <label class="_span data-v-b828a386">V</label> <label class="_span data-v-b828a386">W</label> <label class="_span data-v-b828a386">X</label> <label class="_span data-v-b828a386">Y</label> <label class="_span data-v-b828a386">Z</label></view>
+    <view class="_div data-v-b828a386 location"><label class="_span data-v-b828a386 chiose-city">北京市</label> <label class="_span data-v-b828a386 gps">GPS定位</label></view>
+    <view class="_div data-v-b828a386 hot-city">
+      <view class="_div data-v-b828a386 city-title">热门城市</view>
+      <view class="_div data-v-b828a386 hot-city-container">
+        <view class="_div data-v-b828a386">上海</view>
+        <view class="_div data-v-b828a386">北京</view>
+        <view class="_div data-v-b828a386">广东</view>
+        <view class="_div data-v-b828a386">深圳</view>
+        <view class="_div data-v-b828a386">天津</view>
+        <view class="_div data-v-b828a386">杭州</view>
+        <view class="_div data-v-b828a386">南京</view>
+        <view class="_div data-v-b828a386">苏州</view>
+        <view class="_div data-v-b828a386">成都</view>
+        <view class="_div data-v-b828a386">武汉</view>
+        <view class="_div data-v-b828a386">重庆</view>
+        <view class="_div data-v-b828a386">西安</view>
+      </view>
+      <view class="_div data-v-b828a386 letter"> A </view>
+      <view class="_ul data-v-b828a386 city-list">
+        <view class="_li data-v-b828a386">阿巴嘎旗</view>
+        <view class="_li data-v-b828a386">阿坝</view>
+        <view class="_li data-v-b828a386">阿坝县</view>
+        <view class="_li data-v-b828a386">阿城区</view>
+        <view class="_li data-v-b828a386">阿尔山市</view>
+        <view class="_li data-v-b828a386">阿合奇县</view>
+        <view class="_li data-v-b828a386">阿克塞哈萨克族自治县</view>
+      </view>
+    </view>
+  </view>
+</template>

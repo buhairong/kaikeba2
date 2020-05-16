@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            margin: 200px auto;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+</body>
+</html>
+<script>
+(function(){
+    var box = document.getElementById('box');
+
+    var a = 1;
+    var b = 0;
+    var c = 0;
+    var d = 1;
+    var e = 0;
+    var f = 0;
+
+    // x位移
+    function tanslateX(x){
+        e += x;
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    // y位移
+    function tanslateY(y){
+        f += y;
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    // x缩放
+    function scaleX(x){
+        a *= x;
+        c *= x;
+        e *= x;
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    // y缩放
+    function scaleY(y){
+        b *= y;
+        d *= y;
+        f *= y;
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    // x倾斜
+    function skewX(xDeg){
+        c = Math.tan(xDeg/180 * Math.PI)
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    // y倾斜
+    function skewY(yDeg){
+        b = Math.tan(yDeg/180 * Math.PI)
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    // 旋转
+    function rotate(deg){
+        a = Math.cos(deg/180 * Math.PI)
+        b = Math.sin(deg/180 * Math.PI)
+        c = -Math.sin(deg/180 * Math.PI)
+        d = Math.cos(deg/180 * Math.PI)
+        box.style.transform = 'matrix('+a+', '+b+', '+c+', '+d+', '+e+', '+f+')';
+    }
+
+    box.onclick = function(){
+        rotate(30);
+    }
+
+    // 矩阵不能再逆向推回之前我们做了哪些操作 -transform 操作的过程不能获取
+})();
+
+</script>

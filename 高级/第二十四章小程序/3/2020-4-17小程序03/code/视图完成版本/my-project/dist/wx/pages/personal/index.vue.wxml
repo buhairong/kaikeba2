@@ -1,0 +1,9 @@
+<template name="544370a2">
+  <view class="_div data-v-79ca6152 personal">
+    <view class="_div data-v-79ca6152 person-picture">
+      <image class="_img data-v-79ca6152 person-img" src="/static/images/personal.jpg" alt></image>
+    </view> <label class="_span data-v-79ca6152">名字 男</label> <label class="_span data-v-79ca6152">China</label>
+    <view class="_div data-v-79ca6152 collection"><label class="_span data-v-79ca6152 collection-text">收藏列表</label> <label class="_span data-v-79ca6152 right-arrows"></label></view>
+    <view class="_div data-v-79ca6152 downPage"></view>
+  </view>
+</template>

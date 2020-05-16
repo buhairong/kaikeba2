@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+// 5. 下面这个JS程序的输出是什么？
+// 答案：10 3
+    var length = 10
+    function fn () {
+        console.log(this.length)
+    }
+    var obj = {
+        length: 5,
+        method: function (fn) {
+            fn()
+            arguments[0]() // [fn,1,2] 作为arguments对象的属性调用
+        }
+    }
+    obj.method(fn,1,2)
+
+// 6. 下面这个JS程序的输出是什么？
+/*
+*  解析：
+    这里要注意运算的优先级
+    1. 先执行 ++i,这里 i 变成了 1
+    2. 再执行 i == i, (注意 i++ 中的 ++ 运算优先级最低，会运算完其他之后，最后执行++)
+    3. i == i 他自己那自然是成立的 所以返回 true
+    最终结果 为 true
+*/
+var i = 0;
+console.log( ++i === i++ );    // true
+
+// 7. 下面这个JS程序的输出是什么？
+console.log(1+ +"2"+"2"); // 32   这里重点注意(+"2"),这个 + 号，代表的是正负的正号，正号本身会把字符串正常数字，所以结果变成 1 + 2 + "2",最终结果为 '32'
+
+// 8. 下面这个JS程序的输出是什么？
+/*
+var x;
+var y;
+var z;
+function add(n)
+{
+    return n = n + 1;
+}
+function add(n)
+{
+    return n = n + 3;
+}
+x = 1, y = z = 0;
+
+y = add(x);
+
+z = add(x);
+*/
+var x = 1, y = z = 0;
+function add(n)
+{
+    return n = n + 1;
+}
+y = add(x);
+function add(n)
+{
+    return n = n + 3;
+}
+z = add(x);
+console.log(x,y,z); // 1 4 4
+
+
+// 9. 下面这个JS程序的输出是什么？
+// 答案：0 1 0
+/*
+    function Foo () {
+        var i = 0
+        return function () {
+            console.log(i++)
+        }
+    }
+    var f1 = Foo()
+    var f2 = Foo()
+    f1()
+    f1()
+    f2()*/
+
+// 10. 下面这个JS程序的输出是什么？
+// 答案：100 101
+
+    function f1 () {
+        var n = 100
+        nAdd = function () {
+            n += 1
+        }
+        function f2 () {
+            console.log(n)
+        }
+        return f2
+    }
+
+    var result = f1()
+    result()
+    nAdd()
+    result()
+
+// 12. 下面这个JS程序的输出是什么？
+/*
+    var bb;
+    function aa(bb) {
+        var bb;
+        bb = 2;
+        console.log(bb); // 2
+    };
+    bb = 1;
+    aa(bb);
+    console.log(bb); // 1
+
+    当函数声明了形参bb时，函数中的 bb 只是 局部变量，并不影响外边的变量，函数外的 bb 依然是 1
+*/
+var bb = 1;
+function aa(bb) {
+    bb = 2;
+    console.log(bb);
+};
+aa(bb);
+console.log(bb);
+// 13. 下面这个JS程序的输出是什么？
+// 答案：bar bar undefined bar
+/*
+var myObject = {
+    foo: "bar",
+    func: function () {
+        var self = this
+        console.log(this.foo)
+        console.log(self.foo)
+        function fn() {
+            console.log(this.foo)
+            console.log(self.foo)
+        }
+        fn();
+    }
+}
+myObject.func()
+*/
+
+    var myObject = {
+        foo: "bar",
+        func: function () {
+            var self = this
+            console.log(this)
+            console.log(this.foo)
+            console.log(self.foo)
+            ;(function() {
+                console.log(this)
+                console.log(this.foo)
+                console.log(self.foo)
+            }())
+        }
+    }
+    myObject.func()
+
+// 14. 下面这个JS程序的输出是什么？
+// 答案：
+
+    function fn1 () {
+        var a = 0
+        function fn2 () {
+            ++a
+            console.log(a)
+        }
+        return fn2
+    }
+    fn1()()
+    var newFn = fn1()
+    newFn()
+    newFn()
+
+// 15 下面这个JS程序的输出是什么？
+    console.log([] == 0) // true  和数字比较会转成数字进行比较  Number([]) => Number('') => 0
+    console.log({} == 0) // false  对象转成数字为NaN
+    console.log(!{} == 0) // true 取反只能作用于布尔值，对象转成布尔值都为true
+    console.log(![] == 0) // true 取反只能作用于布尔值，对象转成布尔值都为true
+    console.log({} == {}) // false 对象比较的是地址，所以对象永远不等
+    console.log(!{} == ![]) // true 取反只能作用于布尔值，对象转成布尔值都为true，取反后都为false
+
+// 16 下面这个JS程序的输出是什么？
+    console.log([1,2] == '1,2') //true  和字符串比较，会将数组先转成字符串
+    console.log({} == '[object Object]') //true  对象转成字符串为 '[object Object]'
+    console.log([1,2] == '[1,2]') //false
+    console.log({} == Object) //false  对象比较的是地址，所以对象永远不等
+
+// 17 下面这个JS程序的输出是什么？
+/*
+解析：
+    这里还是作用域问题
+注意：var a = b = 5;  这里只是给 a 加了声明，也就是 a 是声明在函数内的，而 b 没有声明
+a 声明在函数内，也就是 a 是函数的局部变量，b 没有声明，没有声明就会变成全局变量
+在函数外，调用 b ，由于 b 是全局的所以调用 结果为 5
+在函数外，调用 a ，由于 a 是局部变量，所以 找不到 就 报错了
+*/
+(function() {
+    var a = b = 5;
+})();
+console.log(b); // 5
+console.log(a); // Uncaught ReferenceError: a is not defined
+</script>
