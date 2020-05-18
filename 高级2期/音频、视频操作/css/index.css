@@ -131,3 +131,46 @@ li {
 #video-play .control-speed-box .focus{
     color: rgba(0, 150, 255, 1);
 }
+
+.volume {
+    position: relative;
+}
+
+.control-volume-box {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 50px;
+    height: 180px;
+    background: rgba(255, 255, 255, .6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.control-volume-range {
+    width: 10px;
+    height: 160px;
+    border-radius: 5px;
+    background: #333;
+}
+
+.control-volume-slider {
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    width: 10px;
+    height: 0;
+    background: rgba(0, 150, 255, 1);
+    border-radius: 5px;
+}
+
+.control-volume-bar {
+    position: absolute;
+    top: -7px;
+    left: -2px;
+    width: 14px;
+    height: 14px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+}

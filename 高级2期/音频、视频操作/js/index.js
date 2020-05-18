@@ -99,6 +99,9 @@ let methods = {
                 list.classList.remove('focus')
             }
         })
+    },
+    volumechange() {
+        els.controlVolumeSlider.style.height = els.video.volume * 160 + 'px'
     }
 }
 
@@ -111,6 +114,7 @@ els.video.ondurationchange = methods.durationchange
 els.video.ontimeupdate = methods.timeupdate
 els.video.onprogress = methods.progress
 els.video.onratechange = methods.ratechange
+els.video.onvolumechange = methods.volumechange
 
 els.videoPlayer.onclick = function(e) {
     let target = e.target
@@ -139,3 +143,37 @@ els.controlSpeedList.forEach(list => {
         methods.showMessage(`当前速度：${els.video.playbackRate}`)
     }
 })
+
+// 显示隐藏音量播放面板
+// els.volume.onmouseenter = function() {
+//     els.controlVolumeBox.style.display = 'block'
+// }
+//
+// els.volume.onmouseleave = function() {
+//     els.controlVolumeBox.style.display = 'none'
+// }
+
+// 拖拽改变音量
+els.controlVolumeSlider.onmousedown = function() {
+    document.onmousemove = function(e) {
+        try{
+            els.video.volume = (1 - helpers.getDisCursorToElement(els.controlVolumeRange, e).y/160).toFixed(2)
+        }catch(e) {
+
+        }
+
+    }
+
+    document.onmouseup = function() {
+        document.onmousemove = null
+    }
+
+    return false
+}
+
+// 点击改变音量
+els.controlVolumeBox.onclick = function(e) {
+    if(e.target === els.controlVolumeRange || e.target === els.controlVolumeSlider) {
+        els.video.volume = (1 - helpers.getDisCursorToElement(els.controlVolumeRange, e).y/160).toFixed(2)
+    }
+}
