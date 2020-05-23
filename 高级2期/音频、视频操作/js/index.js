@@ -5,7 +5,11 @@ let els = {
 let configs = {
     messageTimer: 0,
     canplay: false,
-    bufferedEnd: 0
+    bufferedEnd: 0,
+    mutedChanged: false,
+    prevClickTimestamp: Date.now(),
+    dblClickTimer: 0,
+    fullScreenTimer: 0
 }
 
 let helpers = {
@@ -101,11 +105,40 @@ let methods = {
         })
     },
     volumechange() {
-        els.controlVolumeSlider.style.height = els.video.volume * 160 + 'px'
+        if(configs.mutedChanged) {
+            // 表示当前的事件是由静音变化导致的
+            configs.mutedChanged = false
+        }else {
+            if(els.video.volume <= 0) {
+                els.video.volume = 0
+                els.video.muted = true
+            }else {
+                els.video.muted = false
+            }
+        }
+
+        if(els.video.muted) {
+            //els.video.classList.remove('volume')
+           // els.video.classList.add('muted')
+            els.controlVolumeSlider.style.height = 0
+        }else{
+           // els.video.classList.remove('muted')
+          //  els.video.classList.add('volume')
+            els.controlVolumeSlider.style.height = els.video.volume * 160 + 'px'
+        }
+
+
+    },
+    requestOrExitFullScreen() {
+        if(document.fullscreenElement) {
+            document.exitFullscreen()
+        } else {
+            els.videoPlayer.requestFullscreen()
+        }
     }
 }
 
-
+els.video.volume = 0.5
 
 els.video.oncanplay = methods.canplay
 els.video.onplaying = methods.playing
@@ -118,14 +151,30 @@ els.video.onvolumechange = methods.volumechange
 
 els.videoPlayer.onclick = function(e) {
     let target = e.target
-    if(target === els.video || target === els.play) {
+
+    if(target === els.play) {
         methods.playOrPause()
+    }
+
+    if(target === els.video) {
+        if(Date.now() - configs.prevClickTimestamp < 500) {
+            // 双击
+            clearTimeout(configs.dblClickTimer)
+            methods.requestOrExitFullScreen()
+        }else{
+            // 单击
+            configs.dblClickTimer = setTimeout(() => {
+                methods.playOrPause()
+            }, 500)
+        }
     }else if(target === els.progressContainer) {
         let pos = helpers.getDisCursorToElement(target, e)
         let v = pos.x / target.clientWidth
         els.video.currentTime = els.video.duration * v
         methods.showMessage(`当前时间：${helpers.formatDutation(els.video.currentTime * 1000)}`)
     }
+
+    configs.prevClickTimestamp = Date.now()
 }
 
 // 显示隐藏播放速度面板
@@ -175,5 +224,29 @@ els.controlVolumeSlider.onmousedown = function() {
 els.controlVolumeBox.onclick = function(e) {
     if(e.target === els.controlVolumeRange || e.target === els.controlVolumeSlider) {
         els.video.volume = (1 - helpers.getDisCursorToElement(els.controlVolumeRange, e).y/160).toFixed(2)
+    }
+}
+
+// 静音切换
+els.volume.onclick = function(e) {
+    if(e.target === this) {
+        els.video.muted = !els.video.muted
+        configs.mutedChanged = true
+    }
+}
+
+// 点击全屏和退出全屏
+els.fullscreen.onclick = methods.requestOrExitFullScreen
+
+// 全屏播放隐藏鼠标和控制面板
+els.videoPlayer.onmousemove = function() {
+    if(!els.video.paused) {
+        clearTimeout(configs.fullScreenTimer)
+        els.control.style.opacity = 1
+        els.control.style.cursor = 'pointer'
+        configs.fullScreenTimer = setTimeout(() => {
+            els.control.style.opacity = 0
+            els.control.style.cursor = 'none'
+        }, 2000)
     }
 }
