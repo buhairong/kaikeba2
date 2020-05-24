@@ -34,6 +34,18 @@ wss.on("connection", function(ws) {
 
         ws.on("close", () => {
             // 关闭请求 socket 和数据
+            console.log('有用户退出')
+            // 当前退出的 socket 用户删除
+            delete socketObj[openid]
+            // 把用户信息删除
+            usersArr.filter(user => {
+                return user.openid !== openid
+            })
+
+            // 对所有socket连接广播
+            for(let key in socketObj) {
+                socketObj[key].send(JSON.stringify(usersArr))
+            }
         })
 
         // 对所有socket连接广播

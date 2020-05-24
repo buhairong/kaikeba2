@@ -1,0 +1,7 @@
+<view>
+  <button type="primary" bindtap="addData">点击添加数据</button>
+  <button bindtap="delData">点击删除</button>
+  <button bindtap="updateData">点击修改</button>
+  <button bindtap="getData">查询</button>
+  <button>更新数据</button>
+</view>

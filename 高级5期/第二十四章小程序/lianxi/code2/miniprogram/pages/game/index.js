@@ -13,7 +13,23 @@ Page({
   }, 
 
   async getInfo() {
-    await this.getUserInfo()
+    let userInfo = await this.getUserInfo()
+    let openid = await this.getOpenId()
+    userInfo.openid = openid
+    wx.setStorageSync(openid, JSON.stringify(userInfo))
+    
+    wx.sendSocketMessage({
+      data: JSON.stringify(userInfo),
+    })
+
+    wx.onSocketMessage((res) => {
+      console.log(res)
+      let usersArr = JSON.parse(res.data)
+      this.setData({
+        isLogin: true,
+        usersArr
+      })
+    })
   },
 
   getUserInfo() {
@@ -33,39 +49,23 @@ Page({
 
   getOpenId() {
     // 获取 openid
-    wx.login({
-      success: res => {
-        let code = res.code
-        wx.request({
-          url: "https://api.weixin.qq.com/sns/jscode2session?appid=wx4a74252abccb50b6&secret=6bc9553e6694fa5c392effd060365131&js_code="+code+"&grant_type=authorization_code",
-          success: res => {
-            let openid = res.data.openid
-            userInfo.openid = openid
-            console.log(userInfo)
-            this.setData({
-              userInfo,
-              isLogin: true,
-              usersArr: [...this.data.usersArr, userInfo]
-            })
-            wx.setStorageSync("userInfo", JSON.stringify(userInfo))
-
-            // 发送服务端广播
-            wx.sendSocketMessage({
-              data: JSON.stringify(userInfo)
-            })
-
-            wx.onSocketMessage((res) => {
-              console.log(JSON.parse(res.data))
-
-              this.setData({
-                usersArr: JSON.parse(res.data)
-              })
-            })
-          }
-        })
-      }
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: res => {
+          let code = res.code
+          wx.request({
+            url: "https://api.weixin.qq.com/sns/jscode2session?appid=wx4a74252abccb50b6&secret=6bc9553e6694fa5c392effd060365131&js_code="+code+"&grant_type=authorization_code",
+            success: res => {
+              let openid = res.data.openid
+              resolve(openid)              
+            },
+            fail: (err) => {
+              reject(err)
+            }
+          })
+        }
+      })
     })
-
   },
 
   startTime() {
@@ -75,17 +75,10 @@ Page({
     })
   },
 
-  endTime() {
+  async endTime() {
     let endTime = new Date().getTime()
     let tapTime = (endTime - this.data.startTime)/1000
     console.log(tapTime)
-
-    let userInfo = this.data.userInfo
-    userInfo.tapTime = tapTime
-    
-    wx.sendSocketMessage({
-      data: JSON.stringify(userInfo)
-    })
 
     if(tapTime > 0 && tapTime <= 1) {
       this.setData({
@@ -104,6 +97,23 @@ Page({
         message: "超了！！"
       })
     }
+    
+    let openid = await this.getOpenId()
+    let userInfo = JSON.parse(wx.getStorageSync(openid))
+    userInfo.tapTime = tapTime
+
+    wx.sendSocketMessage({
+      data: JSON.stringify(userInfo)
+    })
+
+    wx.onSocketMessage((res) => {
+      let usersArr = JSON.parse(res.data)
+      this.setData({
+        isLogin: true,
+        usersArr
+      })
+    })
+
   },
 
   /**
@@ -115,28 +125,54 @@ Page({
       url: 'ws://192.168.3.11:8282',
     })
 
-    wx.onSocketOpen(() => {
+    wx.onSocketOpen(async () => {
       console.log('连接成功')
-      if(wx.getStorageSync("userInfo")) {
-        let userInfo = JSON.parse(wx.getStorageSync("userInfo"))
-        this.setData({
-          userInfo,
-          isLogin: true,
-          usersArr: [...this.data.usersArr, userInfo]
-        })
-  
-        // 发送服务端广播
+      let openid = await this.getOpenId()
+      let userInfo = wx.getStorageSync(openid)
+      console.log(userInfo)
+
+      if(userInfo) {
+        // 已经登录 把登录信息推送到 socket 服务器广播
         wx.sendSocketMessage({
-          data: JSON.stringify(userInfo)
+          data: JSON.stringify(userInfo),
         })
-  
+    
         wx.onSocketMessage((res) => {
           console.log(JSON.parse(res.data))
+          let usersArr = JSON.parse(res.data)
           this.setData({
-            usersArr: JSON.parse(res.data)
+            isLogin: true,
+            usersArr
           })
         })
+      }else {
+        // 没有登录
+        this.setData({
+          isLogin: false
+        })
       }
+
+
+      // if(wx.getStorageSync("userInfo")) {
+      //   let userInfo = JSON.parse(wx.getStorageSync("userInfo"))
+      //   this.setData({
+      //     userInfo,
+      //     isLogin: true,
+      //     usersArr: [...this.data.usersArr, userInfo]
+      //   })
+  
+      //   // 发送服务端广播
+      //   wx.sendSocketMessage({
+      //     data: JSON.stringify(userInfo)
+      //   })
+  
+      //   wx.onSocketMessage((res) => {
+      //     console.log(JSON.parse(res.data))
+      //     this.setData({
+      //       usersArr: JSON.parse(res.data)
+      //     })
+      //   })
+      // }
     })
   },
 

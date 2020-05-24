@@ -1,5 +1,6 @@
 {
   "pages": [    
+    "pages/myCloud/index",
     "pages/game/index",
     "pages/test/index",
     "pages/welcome/index",
