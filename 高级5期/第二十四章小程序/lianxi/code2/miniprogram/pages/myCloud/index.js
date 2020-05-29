@@ -13,8 +13,8 @@ Page({
   addData() {
     db.collection('test1').add({
       data: {
-        name: '李四',
-        age: 20
+        name: '张三',
+        age: 15
       }
     }).then(res => {
       console.log(res)
@@ -41,6 +41,26 @@ Page({
     db.collection('test1').where({
       age: _.gt(18)
     }).get().then(res => {
+      console.log(res)
+    })
+  },
+
+  updateMutileData() {
+    wx.cloud.callFunction({
+      name: 'updateMutileData',
+      data: {
+        a: 10,
+        b: 20
+      }
+    }).then(res => {
+      console.log(res)
+    })
+  },
+
+  getNews() {
+    wx.cloud.callFunction({
+      name: 'getNews'
+    }).then(res => {
       console.log(res)
     })
   },
