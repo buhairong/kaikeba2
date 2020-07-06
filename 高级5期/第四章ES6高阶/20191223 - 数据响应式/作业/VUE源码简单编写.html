@@ -6,7 +6,7 @@
 </head>
 <body>
     <div id="app">
-        {{message}}  {{modelData}} {{message}}
+        {{message}}     {{modelData}}     {{message}}
         <div>
             <p>姓名:{{ name }}，年龄: {{age}}</p>
             <p v-html="htmlData"></p>
@@ -139,7 +139,7 @@
                         this.compileNode(node)
                     }
                 } else if (node.nodeType === 3) { // 如果节点类型为文本，解析{{}}
-                    let reg = /\{\{\s*(\S+)\s*\}\}/g // 正则匹配出所有{{}}模板
+                    let reg = /\{\{\s*([^\s\{\}]+)\s*\}\}/g // 正则匹配出所有{{}}模板
                     let context = node.textContent // 获取节点文本
 
                     // 找到所有{{}}模板

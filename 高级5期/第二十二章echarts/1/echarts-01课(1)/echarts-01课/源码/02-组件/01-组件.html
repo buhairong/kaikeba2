@@ -110,7 +110,14 @@
         *       none 什么都不触发
         * */
         tooltip:{
-            trigger:'axis'
+            trigger:'axis',
+            formatter: function(params) {
+                return `
+								<div style="width:20px;height: 20px; background:red;border-radius:50%;">
+
+								</div>
+							`
+            }
         },
 
 
